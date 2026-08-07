@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#1F497D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>OrderPad — UGE Supply Preorder</title>
+<link id="manifest" rel="manifest">
+<link id="favicon" rel="icon">
+<link id="appleicon" rel="apple-touch-icon">
+<style>
+  :root{
+    --blue:#1F497D; --blue2:#2E6BB0; --head:#8EB4D8;
+    --yellow:#FFE22E; --yellowRow:#FFF7B0;
+    --green:#59a14f; --greenCell:#C6E0B4;
+    --ink:#1b2430; --muted:#6b7683; --line:#e4e8ee; --bg:#f4f6f9; --card:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    background:var(--bg); color:var(--ink);
+    padding-bottom:96px;
+    -webkit-text-size-adjust:100%;
+  }
+  /* top bar */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(135deg,var(--blue2),var(--blue));
+    color:#fff; padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;
+    display:flex; align-items:center; gap:11px;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+  }
+  .logo{width:38px;height:38px;border-radius:9px;display:block;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.2px}
+  .brand .sub{font-size:11px;opacity:.8;margin-top:1px}
+  .brand{flex:1;display:flex;align-items:center;gap:11px}
+  .icon-btn{
+    background:rgba(255,255,255,.16); border:none; color:#fff; width:40px;height:40px;
+    border-radius:10px; font-size:18px; display:grid;place-items:center; cursor:pointer;
+  }
+  .icon-btn.on{background:var(--yellow); color:var(--blue)}
+  /* meta row */
+  .meta-row{display:flex; gap:8px; padding:12px 14px 6px; align-items:center}
+  .chip{background:var(--card); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px}
+  .date-chip input{border:none; font:inherit; font-weight:700; color:var(--ink); background:transparent; width:120px}
+  .count-chip{margin-left:auto; color:var(--muted)}
+  /* list */
+  #list{padding:6px 10px 4px}
+  .item{
+    background:var(--card); border:1px solid var(--line); border-left:5px solid var(--line);
+    border-radius:12px; margin:8px 4px; padding:10px 12px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .item.tier-1{border-left-color:var(--yellow); background:linear-gradient(90deg,#fffdf0, #fff 55%)}
+  .item.tier-2{border-left-color:#9db9d8}
+  .item.tier-3{border-left-color:#c3c8cf}
+  .item.filled{box-shadow:0 0 0 2px rgba(89,161,79,.25) inset}
+  .info{flex:1;min-width:0}
+  .name{font-weight:700; font-size:14px; line-height:1.2; word-break:break-word}
+  .meta{font-size:11.5px; color:var(--muted); margin-top:3px; font-variant-numeric:tabular-nums}
+  .tbadge{display:inline-block; font-size:10px; font-weight:800; color:var(--blue); background:#eef3fb; border-radius:5px; padding:1px 5px; margin-left:6px; vertical-align:1px}
+  .tier-1 .tbadge{background:#fff2b0; color:#7a5a00}
+  /* qty stepper */
+  .qty{display:flex; align-items:center; gap:0; flex:none}
+  .qty button{width:38px;height:40px;border:1px solid var(--line);background:#f7f9fc;font-size:22px;line-height:1;color:var(--blue);cursor:pointer}
+  .qty button:active{background:#e9eef6}
+  .qty .minus{border-radius:10px 0 0 10px}
+  .qty .plus{border-radius:0 10px 10px 0}
+  .qty input{
+    width:48px;height:40px;border:1px solid var(--line);border-left:none;border-right:none;
+    text-align:center; font-size:17px; font-weight:800; color:var(--ink); background:#fff;
+    -moz-appearance:textfield;
+  }
+  .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .qty input:focus{outline:none;background:#fffdf0}
+  /* edit controls */
+  .editctrls{display:flex; gap:6px; flex:none; flex-wrap:wrap; justify-content:flex-end; max-width:150px}
+  .editctrls button{width:38px;height:36px;border:1px solid var(--line);background:#f7f9fc;border-radius:9px;font-size:15px;color:var(--blue);cursor:pointer;display:grid;place-items:center}
+  .editctrls button.tbtn{font-weight:800;font-size:12px}
+  .editctrls button.del{color:#c0392b}
+  /* edit toolbar */
+  .edit-tools{display:none; gap:8px; padding:0 14px 8px; flex-wrap:wrap}
+  body.editing .edit-tools{display:flex}
+  body.editing .qty{display:none}
+  body:not(.editing) .editctrls{display:none}
+  .edit-tools button{flex:1; min-width:120px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px; font-size:13px; font-weight:700; color:var(--blue); cursor:pointer}
+  .edit-tools button.warn{color:#c0392b}
+  .hint{padding:0 18px 4px; font-size:12px; color:var(--muted)}
+  /* bottom bar */
+  .bottombar{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    background:rgba(255,255,255,.96); backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+    padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);
+    display:flex; gap:10px;
+  }
+  .bottombar button{border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;padding:15px}
+  .ghost{background:#eef1f5;color:var(--muted);flex:none;padding-left:20px;padding-right:20px}
+  .primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;flex:1;box-shadow:0 4px 12px rgba(31,73,125,.35)}
+  .primary:active{transform:translateY(1px)}
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);opacity:0;
+    background:#1b2430;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;
+    transition:.25s;z-index:40;pointer-events:none;max-width:88vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:14px}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img id="logo" class="logo" alt="">
+      <div>
+        <h1>OrderPad</h1>
+        <div class="sub">UGE Supply Preorder</div>
+      </div>
+    </div>
+    <button id="editBtn" class="icon-btn" title="Edit list">✎</button>
+  </header>
+
+  <div class="meta-row">
+    <div class="chip date-chip">📅 <input id="orderDate" type="date"></div>
+    <div class="chip count-chip" id="countChip">0 items</div>
+  </div>
+
+  <div class="edit-tools">
+    <button id="addBtn">＋ Add item</button>
+    <button id="sortTierBtn">↕ Sort by tier</button>
+    <button id="resetBtn" class="warn">↺ Restore defaults</button>
+  </div>
+  <div class="hint" id="editHint" style="display:none">Edit mode — reorder with ↑↓, tap T# to change tier (how often you order), ✎ to rename, ✕ to remove.</div>
+
+  <div id="list"></div>
+
+  <div class="bottombar">
+    <button id="clearBtn" class="ghost">Clear</button>
+    <button id="sendBtn" class="primary">Generate &amp; Send PDF</button>
+  </div>
+
+  <div id="toast"></div>
+  <a id="dl" style="display:none"></a>
+
+<script>
+/* ---------------- default catalog (order + tiers from the UGE Preorder Form) --------------- */
+const DEFAULTS = [
+  {name:'SCOTT TOILET TISSUE',        unit:'80/Case',   sku:'APL1400D', tier:1},
+  {name:'SCOTT MFOLD PAPER TOWEL',    unit:'25/Case',   sku:'APT1410D', tier:1},
+  {name:'FACIAL TISSUE',              unit:'60/Case',   sku:'PLT617D',  tier:1},
+  {name:'FOAMING HAND SOAP',          unit:'32/Case',   sku:'AAF1130D', tier:1},
+  {name:'HUB FLIGHT DECK PACKS',      unit:'50/Bag',    sku:'HFDP',     tier:1},
+  {name:'LAVATORY TRASH BAGS',        unit:'500/Case',  sku:'BAG609D',  tier:1},
+  {name:'LONG TARMAC DELAY KITS',     unit:'1/Each',    sku:'LT705C',   tier:1},
+  {name:'MAXI PADS',                  unit:'250/CS',    sku:'PLT605D',  tier:1},
+  {name:'AIR SICKNESS BAGS',          unit:'1000/Case', sku:'AAB1100D', tier:1},
+  {name:'JET SCENT LAVATORY SPRAY',   unit:'12/Case',   sku:'LAV602D',  tier:1},
+  {name:'INFLIGHT CHECKLISTS',        unit:'1/Each',    sku:'OEC',      tier:1},
+  {name:'METAL PATENTED COAT HANGER', unit:'50/Case',   sku:'HGR2025D', tier:1},
+  {name:'BISTRO MENUS',               unit:'Case',      sku:'SBCXXXX',  tier:1},
+  {name:'CHASE INSERTS',              unit:'Case',      sku:'MPSBI10',  tier:1},
+  {name:'BLACK NR HEADPHONES',        unit:'32/Bag',    sku:'MANBLK-CB-32-D', tier:2},
+  {name:'BLANKET TOTES',              unit:'Tote',      sku:'BBT-D',    tier:2},
+  {name:'CABIN (CLOROX) WIPES',       unit:'Canister',  sku:'138861',   tier:2},
+  {name:'EARBUD TOTES',               unit:'Tote',      sku:'MAE-300-ST-D', tier:2},
+  {name:'FACE MIST',                  unit:'50/Case',   sku:'MAMB30D',  tier:2},
+  {name:'FOAMING HAND SANITIZER',     unit:'32/Case',   sku:'AAC1120D', tier:2},
+  {name:'GARMET GROOM',               unit:'50/Case',   sku:'MAGB15D',  tier:2},
+  {name:'HAND CREAM',                 unit:'50/Case',   sku:'MAHB30D',  tier:2},
+  {name:'INFLIGHT CUSTOMER KITS',     unit:'Tote',      sku:'BCT-D',    tier:2},
+  {name:'LAVATORY TOTES',             unit:'Tote',      sku:'BLT-D',    tier:2},
+  {name:'UAX ONBOARD TOTE',           unit:'Tote',      sku:'BXT-D',    tier:2},
+];
+
+/* ---------------- state ---------------- */
+const LS_ITEMS='op_items_v1', LS_QTY='op_qty_v1';
+let items = load(LS_ITEMS) || DEFAULTS.map(o=>({...o}));
+let qty   = load(LS_QTY) || {};   // sku -> number
+function load(k){ try{return JSON.parse(localStorage.getItem(k))}catch(e){return null} }
+function save(){ localStorage.setItem(LS_ITEMS, JSON.stringify(items)); localStorage.setItem(LS_QTY, JSON.stringify(qty)); }
+
+/* ---------------- render ---------------- */
+const listEl = document.getElementById('list');
+function render(){
+  listEl.innerHTML='';
+  if(!items.length){ listEl.innerHTML='<div class="empty">No items. Tap ✎ then “Add item”.</div>'; }
+  items.forEach((it,i)=>{
+    const q = +qty[it.sku]||0;
+    const row=document.createElement('div');
+    row.className='item tier-'+(it.tier||2)+(q>0?' filled':'');
+    row.innerHTML=`
+      <div class="info">
+        <div class="name">${esc(it.name)}<span class="tbadge">T${it.tier||2}</span></div>
+        <div class="meta">${esc(it.unit)} · ${esc(it.sku)}</div>
+      </div>
+      <div class="qty">
+        <button class="minus" aria-label="minus">−</button>
+        <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
+        <button class="plus" aria-label="plus">＋</button>
+      </div>
+      <div class="editctrls">
+        <button class="up" title="Up">↑</button>
+        <button class="down" title="Down">↓</button>
+        <button class="tbtn" title="Tier">T${it.tier||2}</button>
+        <button class="edit" title="Rename">✎</button>
+        <button class="del" title="Remove">✕</button>
+      </div>`;
+    // qty events
+    const input=row.querySelector('input');
+    row.querySelector('.minus').onclick=()=>setQty(it.sku, (+qty[it.sku]||0)-1, input, row);
+    row.querySelector('.plus').onclick =()=>setQty(it.sku, (+qty[it.sku]||0)+1, input, row);
+    input.oninput=()=>setQty(it.sku, input.value, null, row);
+    // edit events
+    row.querySelector('.up').onclick   =()=>move(i,-1);
+    row.querySelector('.down').onclick =()=>move(i, 1);
+    row.querySelector('.tbtn').onclick =()=>cycleTier(i);
+    row.querySelector('.edit').onclick =()=>editItem(i);
+    row.querySelector('.del').onclick  =()=>{ if(confirm('Remove '+it.name+'?')){ items.splice(i,1); save(); render(); } };
+    listEl.appendChild(row);
+  });
+  updateCount();
+}
+function setQty(sku,val,input,row){
+  let n=Math.max(0, Math.floor(+val||0));
+  qty[sku]=n; save();
+  if(input) input.value = n||'';
+  if(row) row.classList.toggle('filled', n>0);
+  updateCount();
+}
+function updateCount(){
+  const lines=items.filter(it=>(+qty[it.sku]||0)>0).length;
+  const units=items.reduce((s,it)=>s+(+qty[it.sku]||0),0);
+  document.getElementById('countChip').textContent = lines?`${lines} item${lines>1?'s':''} · ${units} qty`:`${items.length} items`;
+}
+function move(i,d){ const j=i+d; if(j<0||j>=items.length)return; [items[i],items[j]]=[items[j],items[i]]; save(); render(); }
+function cycleTier(i){ items[i].tier = (items[i].tier||2)%3 + 1; save(); render(); }
+function editItem(i){
+  const it=items[i];
+  const name=prompt('Item name:', it.name); if(name===null)return;
+  const unit=prompt('Unit of issue (e.g. 32/Case, Tote):', it.unit); if(unit===null)return;
+  const sku =prompt('SKU:', it.sku); if(sku===null)return;
+  if(sku!==it.sku){ qty[sku]=qty[it.sku]||0; delete qty[it.sku]; }
+  items[i]={...it, name:name.trim().toUpperCase(), unit:unit.trim(), sku:sku.trim()};
+  save(); render();
+}
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+/* ---------------- toolbar buttons ---------------- */
+document.getElementById('editBtn').onclick=()=>{
+  document.body.classList.toggle('editing');
+  const on=document.body.classList.contains('editing');
+  document.getElementById('editBtn').classList.toggle('on',on);
+  document.getElementById('editHint').style.display=on?'block':'none';
+};
+document.getElementById('addBtn').onclick=()=>{
+  const name=prompt('Item name:'); if(!name)return;
+  const unit=prompt('Unit of issue (e.g. 32/Case, Tote):','')||'';
+  const sku =prompt('SKU:','')||('ITEM'+(items.length+1));
+  const tier=Math.min(3,Math.max(1, +prompt('Tier 1–3 (1 = order most often):','2')||2));
+  items.push({name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim(),tier}); save(); render();
+};
+document.getElementById('sortTierBtn').onclick=()=>{
+  items.sort((a,b)=>(a.tier||2)-(b.tier||2)); save(); render(); toast('Sorted by tier');
+};
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('Restore the default item list and order? (Quantities are cleared.)')){
+    items=DEFAULTS.map(o=>({...o})); qty={}; save(); render(); toast('Defaults restored');
+  }
+};
+document.getElementById('clearBtn').onclick=()=>{
+  if(Object.values(qty).some(v=>v>0) && !confirm('Clear all quantities?'))return;
+  qty={}; save(); render(); toast('Quantities cleared');
+};
+
+/* date default = today */
+const dateEl=document.getElementById('orderDate');
+(function(){ const d=new Date(); const p=n=>String(n).padStart(2,'0');
+  dateEl.value=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; })();
+
+/* ================= PDF ENGINE (self-contained, no libraries) ================= */
+const HW=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+function tw(str,size){ let w=0; for(const ch of String(str)){ const c=ch.charCodeAt(0); w += (c>=32&&c<=126?HW[c-32]:556); } return w/1000*size; }
+function pesc(s){ return String(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)').replace(/[^\x20-\x7e]/g,''); }
+function nn(x){ return (Math.round(x*100)/100).toString(); }
+function bytesToBase64(u8){ let bin=''; const c=0x8000; for(let i=0;i<u8.length;i+=c){ bin+=String.fromCharCode.apply(null,u8.subarray(i,i+c)); } return btoa(bin); }
+
+function buildPDF(rows, dateStr){
+  const PW=612, PH=792, mL=40;
+  const cItem=[40,232], cUnit=[272,86], cSku=[358,150], cQty=[508,64]; // [x,width]
+  const ops=[];
+  const fill=(x,y,w,h,r,g,b)=>ops.push(`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re f`);
+  const stroke=(x,y,w,h)=>ops.push(`0.72 0.75 0.79 RG`,`0.6 w`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re S`);
+  const text=(t,x,y,size,bold,r,g,b)=>ops.push('BT',`/F${bold?2:1} ${size} Tf`,`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} Td`,`(${pesc(t)}) Tj`,'ET');
+
+  // title + date
+  const title='UGE SUPPLIES - PREORDER FORM';
+  text(title, (PW-tw(title,17))/2, 748, 17, true, .12,.29,.49);
+  if(dateStr){ const dl='Order Date: '+dateStr; text(dl,(PW-tw(dl,10))/2, 730, 10, false, .42,.46,.5); }
+
+  const tableTop=712, headerH=22, botMargin=52;
+  const avail=(tableTop-headerH)-botMargin;
+  const rowH=Math.min(20, rows.length? avail/rows.length : 20);
+  const size = rowH<15 ? 8 : 9;
+
+  // header row
+  const cols=[cItem,cUnit,cSku,cQty], labels=['ITEM','Unit of Issue','SKU','QTY:'];
+  cols.forEach((c,k)=>{
+    fill(c[0], tableTop-headerH, c[1], headerH, .557,.706,.847);
+    stroke(c[0], tableTop-headerH, c[1], headerH);
+    text(labels[k], c[0]+6, tableTop-headerH+(headerH-10)/2+1.5, 10, true, .12,.29,.49);
+  });
+
+  // data rows
+  let y=tableTop-headerH;
+  rows.forEach(it=>{
+    const top=y; y-=rowH; const bot=y; const t=it.tier||2;
+    // tier fill for item/unit/sku
+    let fr=1,fg=1,fb=1, tr=0,tg=0,tb=0;
+    if(t===1){ fr=1; fg=1; fb=0; tr=.518; tg=.235; tb=.047; }         // yellow
+    else if(t===3){ fr=.9; fg=.9; fb=.9; }                            // grey
+    [cItem,cUnit,cSku].forEach(c=>{ fill(c[0],bot,c[1],rowH,fr,fg,fb); stroke(c[0],bot,c[1],rowH); });
+    // qty cell green
+    fill(cQty[0],bot,cQty[1],rowH,.776,.878,.706); stroke(cQty[0],bot,cQty[1],rowH);
+    const base=bot+(rowH-size)/2+1.5;
+    // fit item name
+    let name=it.name; while(tw(name,size)>cItem[1]-10 && name.length>3){ name=name.slice(0,-1); }
+    if(name!==it.name) name=name.slice(0,-1)+'.';
+    text(name, cItem[0]+6, base, size, t===1, tr,tg,tb);
+    text(it.unit, cUnit[0]+6, base, size, false, tr,tg,tb);
+    let sku=it.sku; while(tw(sku,size)>cSku[1]-8 && sku.length>3){ sku=sku.slice(0,-1); }
+    text(sku, cSku[0]+6, base, size, false, tr,tg,tb);
+    const q=+it.qty||0;
+    if(q>0){ const qs=String(q); text(qs, cQty[0]+(cQty[1]-tw(qs,size+1))/2, base, size+1, true, 0,0,0); }
+  });
+
+  // assemble objects
+  const content=ops.join('\n');
+  const objs=[
+    '<</Type/Catalog/Pages 2 0 R>>',
+    '<</Type/Pages/Kids[3 0 R]/Count 1>>',
+    '<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Resources<</Font<</F1 5 0 R/F2 6 0 R>>>>/Contents 4 0 R>>',
+    `<</Length ${content.length}>>\nstream\n${content}\nendstream`,
+    '<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>',
+    '<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>'
+  ];
+  let pdf='%PDF-1.4\n'; const off=[];
+  objs.forEach((b,i)=>{ off[i]=pdf.length; pdf+=`${i+1} 0 obj\n${b}\nendobj\n`; });
+  const xref=pdf.length;
+  pdf+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;
+  off.forEach(o=>{ pdf+=String(o).padStart(10,'0')+' 00000 n \n'; });
+  pdf+=`trailer\n<</Size ${objs.length+1}/Root 1 0 R>>\nstartxref\n${xref}\n%%EOF`;
+  const bytes=new Uint8Array(pdf.length);
+  for(let i=0;i<pdf.length;i++) bytes[i]=pdf.charCodeAt(i)&0xff;
+  return bytes;
+}
+
+/* ---------------- generate & send ---------------- */
+document.getElementById('sendBtn').onclick=async()=>{
+  const rows=items.map(it=>({...it, qty:+qty[it.sku]||0}));
+  const ordered=rows.filter(r=>r.qty>0).length;
+  // date label + filename
+  const [Y,M,D]=dateEl.value.split('-').map(Number);
+  const human=`${M}/${D}/${Y}`;
+  const fname=`UGE Order Form ${M}.${D}.${Y}.pdf`;
+  const bytes=buildPDF(rows, human);
+  const blob=new Blob([bytes],{type:'application/pdf'});
+  const file=new File([blob], fname, {type:'application/pdf'});
+
+  // native Android app bridge (WebView has no navigator.share) -> real share intent
+  if(window.Android && typeof window.Android.sharePdf==='function'){
+    window.__nativeShareError=(m)=>toast('Share failed: '+(m||''));
+    window.Android.sharePdf(bytesToBase64(bytes), fname);
+    toast('Opening share…');
+    return;
+  }
+
+  // try native share sheet (Android)
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:fname, text:`UGE supply preorder — ${human}${ordered?` (${ordered} items)`:''}`});
+      toast('Shared ✔');
+      return;
+    }
+  }catch(e){ if(e && e.name==='AbortError'){ return; } }
+  // fallback: download
+  const url=URL.createObjectURL(blob);
+  const a=document.getElementById('dl'); a.href=url; a.download=fname; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  toast('PDF saved: '+fname);
+};
+
+/* ---------------- toast ---------------- */
+let toastT;
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ================= APP ICON (drawn on canvas -> favicon + manifest) ================= */
+function roundRect(x,ctx,X,Y,W,H,R){ ctx.beginPath();
+  ctx.moveTo(X+R,Y); ctx.arcTo(X+W,Y,X+W,Y+H,R); ctx.arcTo(X+W,Y+H,X,Y+H,R);
+  ctx.arcTo(X,Y+H,X,Y,R); ctx.arcTo(X,Y,X+W,Y,R); ctx.closePath(); }
+function makeIcon(S){
+  const c=document.createElement('canvas'); c.width=c.height=S; const x=c.getContext('2d');
+  // background rounded square, blue gradient
+  const g=x.createLinearGradient(0,0,S,S); g.addColorStop(0,'#2E6BB0'); g.addColorStop(1,'#1F497D');
+  roundRect(x,x,0,0,S,S,S*0.22); x.fillStyle=g; x.fill();
+  // notepad
+  const pw=S*0.52, ph=S*0.62, px=(S-pw)/2, py=S*0.20;
+  x.save(); x.shadowColor='rgba(0,0,0,.25)'; x.shadowBlur=S*0.03; x.shadowOffsetY=S*0.015;
+  roundRect(x,x,px,py,pw,ph,S*0.05); x.fillStyle='#ffffff'; x.fill(); x.restore();
+  // yellow header strip on the pad
+  x.save(); roundRect(x,x,px,py,pw,ph*0.22,S*0.05); x.clip();
+  x.fillStyle='#FFD400'; x.fillRect(px,py,pw,ph*0.22); x.restore();
+  // list lines
+  x.fillStyle='#c7d2e0'; const lx=px+pw*0.14, lw=pw*0.62, lh=S*0.028, gap=ph*0.16;
+  for(let i=0;i<3;i++){ roundRect(x,x,lx,py+ph*0.36+i*gap,lw,lh,lh/2); x.fill(); }
+  // green check circle bottom-right
+  const cr=S*0.12, cx=px+pw*0.86, cy=py+ph*0.86;
+  x.beginPath(); x.arc(cx,cy,cr,0,7); x.fillStyle='#4c9a3f'; x.fill();
+  x.strokeStyle='#fff'; x.lineWidth=S*0.028; x.lineCap='round'; x.lineJoin='round';
+  x.beginPath(); x.moveTo(cx-cr*0.45,cy); x.lineTo(cx-cr*0.08,cy+cr*0.4); x.lineTo(cx+cr*0.5,cy-cr*0.45); x.stroke();
+  return c.toDataURL('image/png');
+}
+(function initIcons(){
+  const i192=makeIcon(192), i512=makeIcon(512);
+  document.getElementById('logo').src=i192;
+  document.getElementById('favicon').href=i192;
+  document.getElementById('appleicon').href=i192;
+  const manifest={ name:'UGE OrderPad', short_name:'OrderPad', description:'UGE supply preorder form',
+    display:'standalone', orientation:'portrait', background_color:'#1F497D', theme_color:'#1F497D', start_url:'.',
+    icons:[ {src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
+            {src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'} ] };
+  const mb=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  document.getElementById('manifest').href=URL.createObjectURL(mb);
+})();
+
+render();
+</script>
+</body>
+</html>
