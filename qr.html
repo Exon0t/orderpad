@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OrderPad — Scan to open</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    background:#f4f6f9;color:#1b2430;display:flex;justify-content:center;padding:24px}
+  .card{background:#fff;border:1px solid #e4e8ee;border-radius:20px;max-width:520px;width:100%;
+    overflow:hidden;box-shadow:0 8px 30px rgba(31,73,125,.12)}
+  header{background:linear-gradient(135deg,#2E6BB0,#1F497D);color:#fff;padding:26px 24px;text-align:center}
+  header h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.3px}
+  header .sub{opacity:.85;margin-top:4px;font-size:14px}
+  .qrwrap{text-align:center;padding:28px 24px 10px}
+  .qrwrap img{width:300px;max-width:82%;height:auto;border:10px solid #fff;border-radius:12px;
+    box-shadow:0 0 0 1px #e4e8ee}
+  .scan{font-size:15px;color:#6b7683;margin:8px 0 0}
+  .btn{display:block;margin:18px 24px 6px;text-align:center;text-decoration:none;
+    background:linear-gradient(135deg,#2E6BB0,#1F497D);color:#fff;font-weight:800;font-size:17px;
+    padding:15px;border-radius:12px}
+  .url{display:block;text-align:center;color:#1F497D;font-size:14px;word-break:break-all;
+    margin:2px 24px 18px}
+  .steps{padding:4px 24px 26px}
+  .step{background:#f7f9fc;border:1px solid #eef1f5;border-radius:12px;padding:14px 16px;margin-top:10px}
+  .step h3{margin:0 0 4px;font-size:15px}
+  .step .pill{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;
+    margin-right:6px;vertical-align:1px}
+  .ios .pill{background:#eef3fb;color:#1F497D}
+  .and .pill{background:#fff2b0;color:#7a5a00}
+  .step p{margin:2px 0 0;font-size:14px;color:#3a4655;line-height:1.45}
+  footer{text-align:center;color:#9aa4b0;font-size:12px;padding:0 24px 22px}
+  @media print{body{background:#fff;padding:0}.card{box-shadow:none;border:none}.btn{display:none}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>OrderPad</h1>
+      <div class="sub">UGE Supply Preorder — scan to open</div>
+    </header>
+    <div class="qrwrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlAAAAJQCAIAAADOgM0SAAALkUlEQVR4nO3dwXGkNRRG0TblQBwPQbEgKOLpTJotKygVlvu9uecEMCXLv+eWVt/H6/V6AMCv7rd3HwAAfoLgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkfD6W+/r9j3cf4Zfy/OvPUb+v0/NM+x6m3ec07meX5+Xv+TYvPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIGH9Hl5tz2n7Xtr2fbtTt89/+z5rfy+1n/dr+d/XKS88ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgIbeHt30vqrbXtd3t39e073Pa/t9t0+5/2v1M44UHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAk2MNj9H7Y6b7XtH9/+z7c7fuEn+SFB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJNjD40fd3p/brnY/9vb4SV54ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAgj28b94nq7m9Z+b+d+3nbd/nO+X73MULD4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASMjt4dX2ura7vbc37d8/Ne380+7n1LTz8L288ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgISP1+v17jPA2/bJTvfbTt3ek9u+93b754V/8sIDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAAS1u/hbd8bOz3PtH24afe/nd/v996P75l/8sIDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAAS1u/hTdsbu237nlxtz2zavt00076HU7Xv87n8e/PCAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEtbv4dX2tE7V9q5q9zPt+9x+n7U9zmfs/r3wAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+ABMEDIEHwAEgQPAASBA+AhM/Hcvbtvvd+Tk3bP5u2Nzbtfqb9vZyq7V9Ou//tvPAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4CEj9fr9dhs+15UbR9u2v1MM+33Ne3+p+3Vnart+U3jhQdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACTYw/sP9qjeu+91m/O/9z5PTft+2MULD4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASPh8LLd9H+v2+bfvvU3bY2PX91w7/23P5f8/eOEBkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJ6/fwantvp6b9vNP2wE7vZ9r5T007/+3vc/u+3e3v8zns/4fbvPAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4CE9Xt42/fMbu9XTdvH2n7+26btt9XOc2raefh3XngAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0DCx+v1epRM25+7bdr5t59nmmnf87T9vNtq9/lc/vfihQdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACR8Ppar7Tlt39+6rbYfNm1f8NT2vcNp38O03+80XngAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0DC+j08+1LvvZ9ptu+BTTu/74dfiRceAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQsH4P73Q/bNq+1+l5bu+lTTvPqWm/39vf5/bv/7Zp3+cpv9/v5YUHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkrN/Du73vNW0/bNp5tp9/2r7gbdv31aadZ9reXu17PuWFB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJAgeAAmCB0CC4AGQIHgAJKzfw5u2R7Xd6d7V7X2s7b/f2/tz2/fJbqvt/23/eW/zwgMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABLW7+Gdqu0/3d6Tm7b3dvs82//9mmn3M23f8Sv2vXnhAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACbk9vO37VdP2qG7vvU2zfd9u2nlO1b6f276W3+cpLzwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyDBHh6j97Sm7cPxvfc57fd7e+9w2vf2HLbPd5sXHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkGAPj//Ffth798+276vd3qur7b1Nu/9pvPAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEwQMgQfAASBA8ABIED4AEe3i/+P7TNPa6dt3ntL29aab9/1DbtzvlhQdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACQIHgAJggdAguABkCB4ACTk9vDse+3a39q+13X7/Le/52nnr/39bv/+p/HCAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEgQPgATBAyBB8ABIEDwAEj5er9e7zwAA13nhAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4ACYIHQILgAZAgeAAkCB4Aj4K/AeUPJrf+72JOAAAAAElFTkSuQmCC" alt="QR code to OrderPad">
+      <p class="scan">Point your phone camera here</p>
+    </div>
+    <a class="btn" href="https://exon0t.github.io/orderpad/">Open OrderPad</a>
+    <a class="url" href="https://exon0t.github.io/orderpad/">https://exon0t.github.io/orderpad/</a>
+    <div class="steps">
+      <div class="step ios">
+        <h3><span class="pill">iPhone</span>Add to Home Screen</h3>
+        <p>Open the link in <b>Safari</b> → tap <b>Share</b> → <b>Add to Home Screen</b>. Launches full-screen; "Generate &amp; Send PDF" uses the iOS share sheet.</p>
+      </div>
+      <div class="step and">
+        <h3><span class="pill">Android</span>Install</h3>
+        <p>Open in <b>Chrome</b> → menu (⋮) → <b>Add to Home Screen</b> — or install the native <b>OrderPad</b> app (APK).</p>
+      </div>
+    </div>
+    <footer>Works offline once loaded · exon0t.github.io/orderpad</footer>
+  </div>
+</body>
+</html>
