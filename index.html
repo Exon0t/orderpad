@@ -26,7 +26,6 @@
     padding-bottom:96px;
     -webkit-text-size-adjust:100%;
   }
-  /* top bar */
   .topbar{
     position:sticky; top:0; z-index:20;
     background:linear-gradient(135deg,var(--blue2),var(--blue));
@@ -43,11 +42,25 @@
     border-radius:10px; font-size:18px; display:grid;place-items:center; cursor:pointer;
   }
   .icon-btn.on{background:var(--yellow); color:var(--blue)}
-  /* meta row */
-  .meta-row{display:flex; gap:8px; padding:12px 14px 6px; align-items:center}
+  /* tabs */
+  .tabs{display:flex; margin:10px 14px 2px; background:#e4e9f0; border-radius:12px; padding:4px; gap:4px}
+  .tabs button{flex:1; border:none; background:transparent; padding:11px; border-radius:9px;
+    font-size:14px; font-weight:800; color:var(--muted); cursor:pointer}
+  .tabs button.active{background:#fff; color:var(--blue); box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .tabs button.active.safety{color:#8a1f1f}
+  /* meta rows */
+  .meta-row{display:flex; gap:8px; padding:8px 14px 2px; align-items:center}
   .chip{background:var(--card); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px}
-  .date-chip input{border:none; font:inherit; font-weight:700; color:var(--ink); background:transparent; width:120px}
+  .date-chip input{border:none; font:inherit; font-weight:700; color:var(--ink); background:transparent; width:118px}
+  .loc-chip{flex:1}
+  .loc-chip input{border:none; font:inherit; font-weight:700; color:var(--ink); background:transparent; width:100%; text-transform:uppercase}
+  .loc-chip input::placeholder{text-transform:none;color:#aab2bd;font-weight:600}
+  .seg{display:inline-flex; background:#e4e9f0; border-radius:10px; padding:3px}
+  .seg button{border:none;background:transparent;padding:8px 16px;border-radius:8px;font-weight:800;font-size:13px;color:var(--muted);cursor:pointer}
+  .seg button.active{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.12)}
   .count-chip{margin-left:auto; color:var(--muted)}
+  .fname{padding:6px 18px 2px; font-size:11.5px; color:var(--muted); word-break:break-all}
+  .fname b{color:var(--blue); font-weight:700}
   /* list */
   #list{padding:6px 10px 4px}
   .item{
@@ -61,9 +74,10 @@
   .item.filled{box-shadow:0 0 0 2px rgba(89,161,79,.25) inset}
   .info{flex:1;min-width:0}
   .name{font-weight:700; font-size:14px; line-height:1.2; word-break:break-word}
-  .meta{font-size:11.5px; color:var(--muted); margin-top:3px; font-variant-numeric:tabular-nums}
+  .meta{font-size:11.5px; color:var(--muted); margin-top:3px; font-variant-numeric:tabular-nums; display:flex; align-items:center; flex-wrap:wrap; gap:2px}
   .tbadge{display:inline-block; font-size:10px; font-weight:800; color:var(--blue); background:#eef3fb; border-radius:5px; padding:1px 5px; margin-left:6px; vertical-align:1px}
   .tier-1 .tbadge{background:#fff2b0; color:#7a5a00}
+  .swatch{width:15px;height:15px;border-radius:4px;border:1px solid rgba(0,0,0,.25);display:inline-block;margin-right:5px;flex:none}
   /* qty stepper */
   .qty{display:flex; align-items:center; gap:0; flex:none}
   .qty button{width:38px;height:40px;border:1px solid var(--line);background:#f7f9fc;font-size:22px;line-height:1;color:var(--blue);cursor:pointer}
@@ -82,8 +96,7 @@
   .editctrls button{width:38px;height:36px;border:1px solid var(--line);background:#f7f9fc;border-radius:9px;font-size:15px;color:var(--blue);cursor:pointer;display:grid;place-items:center}
   .editctrls button.tbtn{font-weight:800;font-size:12px}
   .editctrls button.del{color:#c0392b}
-  /* edit toolbar */
-  .edit-tools{display:none; gap:8px; padding:0 14px 8px; flex-wrap:wrap}
+  .edit-tools{display:none; gap:8px; padding:6px 14px 8px; flex-wrap:wrap}
   body.editing .edit-tools{display:flex}
   body.editing .qty{display:none}
   body:not(.editing) .editctrls{display:none}
@@ -102,7 +115,6 @@
   .ghost{background:#eef1f5;color:var(--muted);flex:none;padding-left:20px;padding-right:20px}
   .primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;flex:1;box-shadow:0 4px 12px rgba(31,73,125,.35)}
   .primary:active{transform:translateY(1px)}
-  /* toast */
   #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:#1b2430;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;
     transition:.25s;z-index:40;pointer-events:none;max-width:88vw;text-align:center}
@@ -116,23 +128,33 @@
       <img id="logo" class="logo" alt="">
       <div>
         <h1>OrderPad</h1>
-        <div class="sub">UGE Supply Preorder</div>
+        <div class="sub">UGE Preorder</div>
       </div>
     </div>
     <button id="editBtn" class="icon-btn" title="Edit list">✎</button>
   </header>
 
+  <div class="tabs">
+    <button id="tabSupplies" class="active">Supplies</button>
+    <button id="tabSafety">Safety Cards</button>
+  </div>
+
   <div class="meta-row">
     <div class="chip date-chip">📅 <input id="orderDate" type="date"></div>
+    <div class="chip loc-chip">📍 <input id="loc" placeholder="Location (e.g. B CON)" autocapitalize="characters"></div>
+  </div>
+  <div class="meta-row">
+    <div class="seg" id="shiftSeg"><button data-s="AM">AM</button><button data-s="PM">PM</button></div>
     <div class="chip count-chip" id="countChip">0 items</div>
   </div>
+  <div class="fname" id="fnamePreview"></div>
 
   <div class="edit-tools">
     <button id="addBtn">＋ Add item</button>
     <button id="sortTierBtn">↕ Sort by tier</button>
     <button id="resetBtn" class="warn">↺ Restore defaults</button>
   </div>
-  <div class="hint" id="editHint" style="display:none">Edit mode — reorder with ↑↓, tap T# to change tier (how often you order), ✎ to rename, ✕ to remove.</div>
+  <div class="hint" id="editHint" style="display:none">Edit mode — reorder with ↑↓, tap T# for tier, ✎ to edit, ✕ to remove.</div>
 
   <div id="list"></div>
 
@@ -145,7 +167,7 @@
   <a id="dl" style="display:none"></a>
 
 <script>
-/* ---------------- default catalog (order + tiers from the UGE Preorder Form) --------------- */
+/* ================= catalogs ================= */
 const DEFAULTS = [
   {name:'SCOTT TOILET TISSUE',        unit:'80/Case',   sku:'APL1400D', tier:1},
   {name:'SCOTT MFOLD PAPER TOWEL',    unit:'25/Case',   sku:'APT1410D', tier:1},
@@ -173,81 +195,168 @@ const DEFAULTS = [
   {name:'LAVATORY TOTES',             unit:'Tote',      sku:'BLT-D',    tier:2},
   {name:'UAX ONBOARD TOTE',           unit:'Tote',      sku:'BXT-D',    tier:2},
 ];
+/* UGE B CON Safety Cards — equipment (aircraft), P/N, revision, color */
+const SAFETY_DEFAULTS = [
+  {equip:'A319-G',       pn:'UALSCA319-G',          rev:'R1', color:'Yellow',        hex:'#FFD400'},
+  {equip:'A319-F',       pn:'UALSCA319-F',          rev:'R1', color:'Pink',          hex:'#FF7FB0'},
+  {equip:'A320-S',       pn:'UALSCA320-SDOM',       rev:'R3', color:'Olive',         hex:'#808000'},
+  {equip:'A320-C, S',    pn:'UALSCA320-SOW',        rev:'R1', color:'Light Violet',  hex:'#C9A0DC'},
+  {equip:'A321-N (DE)',  pn:'UALSCA321-NEO-N-DE',   rev:'R2', color:'Brown',         hex:'#8B5A2B'},
+  {equip:'A321-N (US)',  pn:'UALSCA321-NEO-N-US',   rev:'R2', color:'Grayish Green', hex:'#8A9A5B'},
+  {equip:'A321-N (FR)',  pn:'UALSCA321-NEO-N-FR',   rev:'R2', color:'Light Purple',  hex:'#B19CD9'},
+  {equip:'B737-G, S',    pn:'UALSCB737-700OW',      rev:'R3', color:'Sandstone',     hex:'#C9AE7C'},
+  {equip:'B737-800/900', pn:'UALSCB737-800/900SL',  rev:'R2', color:'Orange',        hex:'#FF7F0E'},
+  {equip:'B737-MAX-8/9', pn:'UALSCB737-MAX8/9 OW',  rev:'R2', color:'Goldenrod',     hex:'#DAA520'},
+  {equip:'B757-E',       pn:'UALSCB757-E',          rev:'R2', color:'Sea Green',     hex:'#2E8B57'},
+  {equip:'B757-S',       pn:'UALSCB757-S',          rev:'R3', color:'Light Blue',    hex:'#ADD8E6'},
+  {equip:'B767-L',       pn:'UALSCB767-L',          rev:'R2', color:'Pastel Rose',   hex:'#F7CAC9'},
+  {equip:'B767-Q',       pn:'UALSCB767-300-Q',      rev:'R1', color:'Dark Purple',   hex:'#4B2E83'},
+  {equip:'B767-U',       pn:'UALSCB767-400-U',      rev:'R1', color:'White',         hex:'#FFFFFF'},
+  {equip:'B777-G, M',    pn:'UALSCB777-GM',         rev:'R1', color:'Royal Blue',    hex:'#4169E1'},
+  {equip:'B777-E, N, U', pn:'UALSCB777-KR',         rev:'R1', color:'Rust',          hex:'#B7410E'},
+  {equip:'B777-O',       pn:'UALSCB777-O',          rev:'R1', color:'Brandywine',    hex:'#7B1E27'},
+  {equip:'B777-X',       pn:'UALSCB777-300',        rev:'R2', color:'Hot Pink',      hex:'#FF69B4'},
+  {equip:'B787-H, P',    pn:'UALSCB787-8/9 HP',     rev:'R2', color:'Turquoise',     hex:'#40E0D0'},
+  {equip:'B787-J',       pn:'UALSCB787-10 J',       rev:'R2', color:'Marigold',      hex:'#FCAE1E'},
+];
+const CATALOGS = {
+  supplies: { defaults:DEFAULTS,        title:'UGE SUPPLIES - PREORDER FORM',      type:'SUPPLIES',     noun:'item' },
+  safety:   { defaults:SAFETY_DEFAULTS, title:'UGE SAFETY CARDS - PREORDER FORM',  type:'SAFETY CARDS', noun:'card',
+              note:'TO BE COMPLETED BY UGE SUPERVISORS or OPS MANAGERS ONLY' },
+};
 
-/* ---------------- state ---------------- */
-const LS_ITEMS='op_items_v1', LS_QTY='op_qty_v1';
-let items = load(LS_ITEMS) || DEFAULTS.map(o=>({...o}));
-let qty   = load(LS_QTY) || {};   // sku -> number
+/* ================= state ================= */
 function load(k){ try{return JSON.parse(localStorage.getItem(k))}catch(e){return null} }
-function save(){ localStorage.setItem(LS_ITEMS, JSON.stringify(items)); localStorage.setItem(LS_QTY, JSON.stringify(qty)); }
+const clone = a => a.map(o=>({...o}));
+const store = {
+  supplies: { items: load('op_items_v1')        || clone(DEFAULTS),        qty: load('op_qty_v1')        || {} },
+  safety:   { items: load('op_safety_items_v1') || clone(SAFETY_DEFAULTS), qty: load('op_safety_qty_v1') || {} },
+};
+let mode = localStorage.getItem('op_mode') || 'supplies';
+let shiftVal = localStorage.getItem('op_shift') || (new Date().getHours()<12 ? 'AM' : 'PM');
 
-/* ---------------- render ---------------- */
-const listEl = document.getElementById('list');
+const listEl   = document.getElementById('list');
+const dateEl   = document.getElementById('orderDate');
+const locEl    = document.getElementById('loc');
+const countEl  = document.getElementById('countChip');
+const fnameEl  = document.getElementById('fnamePreview');
+
+const keyOf = it => (it.sku != null ? it.sku : it.pn);
+function save(){
+  localStorage.setItem('op_items_v1',        JSON.stringify(store.supplies.items));
+  localStorage.setItem('op_qty_v1',          JSON.stringify(store.supplies.qty));
+  localStorage.setItem('op_safety_items_v1', JSON.stringify(store.safety.items));
+  localStorage.setItem('op_safety_qty_v1',   JSON.stringify(store.safety.qty));
+  localStorage.setItem('op_mode', mode);
+  localStorage.setItem('op_loc', locEl.value);
+  localStorage.setItem('op_shift', shiftVal);
+}
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+/* ================= render ================= */
 function render(){
+  const S = store[mode];
   listEl.innerHTML='';
-  if(!items.length){ listEl.innerHTML='<div class="empty">No items. Tap ✎ then “Add item”.</div>'; }
-  items.forEach((it,i)=>{
-    const q = +qty[it.sku]||0;
+  if(!S.items.length){ listEl.innerHTML='<div class="empty">Empty. Tap ✎ then "Add".</div>'; }
+  S.items.forEach((it,i)=>{
+    const key=keyOf(it); const q=+S.qty[key]||0;
     const row=document.createElement('div');
-    row.className='item tier-'+(it.tier||2)+(q>0?' filled':'');
-    row.innerHTML=`
-      <div class="info">
-        <div class="name">${esc(it.name)}<span class="tbadge">T${it.tier||2}</span></div>
-        <div class="meta">${esc(it.unit)} · ${esc(it.sku)}</div>
-      </div>
-      <div class="qty">
-        <button class="minus" aria-label="minus">−</button>
-        <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
-        <button class="plus" aria-label="plus">＋</button>
-      </div>
-      <div class="editctrls">
-        <button class="up" title="Up">↑</button>
-        <button class="down" title="Down">↓</button>
-        <button class="tbtn" title="Tier">T${it.tier||2}</button>
-        <button class="edit" title="Rename">✎</button>
-        <button class="del" title="Remove">✕</button>
-      </div>`;
-    // qty events
+    if(mode==='supplies'){
+      row.className='item tier-'+(it.tier||2)+(q>0?' filled':'');
+      row.innerHTML=`
+        <div class="info">
+          <div class="name">${esc(it.name)}<span class="tbadge">T${it.tier||2}</span></div>
+          <div class="meta">${esc(it.unit)} · ${esc(it.sku)}</div>
+        </div>
+        <div class="qty">
+          <button class="minus">−</button>
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
+          <button class="plus">＋</button>
+        </div>
+        <div class="editctrls">
+          <button class="up">↑</button><button class="down">↓</button>
+          <button class="tbtn">T${it.tier||2}</button>
+          <button class="edit">✎</button><button class="del">✕</button>
+        </div>`;
+    } else {
+      row.className='item'+(q>0?' filled':'');
+      row.style.borderLeftColor = it.hex || '#c3c8cf';
+      row.innerHTML=`
+        <div class="info">
+          <div class="name">${esc(it.equip)}</div>
+          <div class="meta"><span class="swatch" style="background:${esc(it.hex)}"></span>${esc(it.color)} · ${esc(it.pn)} · ${esc(it.rev)}</div>
+        </div>
+        <div class="qty">
+          <button class="minus">−</button>
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
+          <button class="plus">＋</button>
+        </div>
+        <div class="editctrls">
+          <button class="up">↑</button><button class="down">↓</button>
+          <button class="edit">✎</button><button class="del">✕</button>
+        </div>`;
+    }
     const input=row.querySelector('input');
-    row.querySelector('.minus').onclick=()=>setQty(it.sku, (+qty[it.sku]||0)-1, input, row);
-    row.querySelector('.plus').onclick =()=>setQty(it.sku, (+qty[it.sku]||0)+1, input, row);
-    input.oninput=()=>setQty(it.sku, input.value, null, row);
-    // edit events
+    row.querySelector('.minus').onclick=()=>setQty(key,(+S.qty[key]||0)-1,input,row);
+    row.querySelector('.plus').onclick =()=>setQty(key,(+S.qty[key]||0)+1,input,row);
+    input.oninput=()=>setQty(key,input.value,null,row);
     row.querySelector('.up').onclick   =()=>move(i,-1);
     row.querySelector('.down').onclick =()=>move(i, 1);
-    row.querySelector('.tbtn').onclick =()=>cycleTier(i);
     row.querySelector('.edit').onclick =()=>editItem(i);
-    row.querySelector('.del').onclick  =()=>{ if(confirm('Remove '+it.name+'?')){ items.splice(i,1); save(); render(); } };
+    row.querySelector('.del').onclick  =()=>{ const nm=it.name||it.equip; if(confirm('Remove '+nm+'?')){ S.items.splice(i,1); save(); render(); } };
+    const tb=row.querySelector('.tbtn'); if(tb) tb.onclick=()=>cycleTier(i);
     listEl.appendChild(row);
   });
   updateCount();
+  updateFnamePreview();
 }
-function setQty(sku,val,input,row){
-  let n=Math.max(0, Math.floor(+val||0));
-  qty[sku]=n; save();
-  if(input) input.value = n||'';
+function setQty(key,val,input,row){
+  const S=store[mode]; let n=Math.max(0,Math.floor(+val||0));
+  S.qty[key]=n; save();
+  if(input) input.value=n||'';
   if(row) row.classList.toggle('filled', n>0);
   updateCount();
 }
 function updateCount(){
-  const lines=items.filter(it=>(+qty[it.sku]||0)>0).length;
-  const units=items.reduce((s,it)=>s+(+qty[it.sku]||0),0);
-  document.getElementById('countChip').textContent = lines?`${lines} item${lines>1?'s':''} · ${units} qty`:`${items.length} items`;
+  const S=store[mode], noun=CATALOGS[mode].noun;
+  const lines=S.items.filter(it=>(+S.qty[keyOf(it)]||0)>0).length;
+  const units=S.items.reduce((s,it)=>s+(+S.qty[keyOf(it)]||0),0);
+  countEl.textContent = lines?`${lines} ${noun}${lines>1?'s':''} · ${units} qty`:`${S.items.length} ${noun}s`;
 }
-function move(i,d){ const j=i+d; if(j<0||j>=items.length)return; [items[i],items[j]]=[items[j],items[i]]; save(); render(); }
-function cycleTier(i){ items[i].tier = (items[i].tier||2)%3 + 1; save(); render(); }
+function move(i,d){ const S=store[mode]; const j=i+d; if(j<0||j>=S.items.length)return; [S.items[i],S.items[j]]=[S.items[j],S.items[i]]; save(); render(); }
+function cycleTier(i){ const it=store.supplies.items[i]; it.tier=(it.tier||2)%3+1; save(); render(); }
 function editItem(i){
-  const it=items[i];
-  const name=prompt('Item name:', it.name); if(name===null)return;
-  const unit=prompt('Unit of issue (e.g. 32/Case, Tote):', it.unit); if(unit===null)return;
-  const sku =prompt('SKU:', it.sku); if(sku===null)return;
-  if(sku!==it.sku){ qty[sku]=qty[it.sku]||0; delete qty[it.sku]; }
-  items[i]={...it, name:name.trim().toUpperCase(), unit:unit.trim(), sku:sku.trim()};
+  const S=store[mode], it=S.items[i];
+  if(mode==='supplies'){
+    const name=prompt('Item name:',it.name); if(name===null)return;
+    const unit=prompt('Unit of issue (e.g. 32/Case, Tote):',it.unit); if(unit===null)return;
+    const sku =prompt('SKU:',it.sku); if(sku===null)return;
+    if(sku!==it.sku){ S.qty[sku]=S.qty[it.sku]||0; delete S.qty[it.sku]; }
+    S.items[i]={...it,name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim()};
+  } else {
+    const equip=prompt('Equipment / aircraft:',it.equip); if(equip===null)return;
+    const pn=prompt('Safety Card P/N:',it.pn); if(pn===null)return;
+    const rev=prompt('Rev.:',it.rev); if(rev===null)return;
+    const color=prompt('Color name:',it.color); if(color===null)return;
+    const hex=prompt('Color hex (e.g. #FFD400):',it.hex); if(hex===null)return;
+    if(pn!==it.pn){ S.qty[pn]=S.qty[it.pn]||0; delete S.qty[it.pn]; }
+    S.items[i]={...it,equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:color.trim(),hex:hex.trim()};
+  }
   save(); render();
 }
-function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
-/* ---------------- toolbar buttons ---------------- */
+/* ================= tabs / controls ================= */
+function setMode(m){
+  mode=m;
+  document.getElementById('tabSupplies').classList.toggle('active',m==='supplies');
+  const ts=document.getElementById('tabSafety'); ts.classList.toggle('active',m==='safety'); ts.classList.toggle('safety',m==='safety');
+  document.getElementById('sortTierBtn').style.display = m==='supplies'?'':'none';
+  document.getElementById('addBtn').textContent = m==='safety'?'＋ Add card':'＋ Add item';
+  save(); render();
+}
+document.getElementById('tabSupplies').onclick=()=>setMode('supplies');
+document.getElementById('tabSafety').onclick  =()=>setMode('safety');
+
 document.getElementById('editBtn').onclick=()=>{
   document.body.classList.toggle('editing');
   const on=document.body.classList.contains('editing');
@@ -255,87 +364,73 @@ document.getElementById('editBtn').onclick=()=>{
   document.getElementById('editHint').style.display=on?'block':'none';
 };
 document.getElementById('addBtn').onclick=()=>{
-  const name=prompt('Item name:'); if(!name)return;
-  const unit=prompt('Unit of issue (e.g. 32/Case, Tote):','')||'';
-  const sku =prompt('SKU:','')||('ITEM'+(items.length+1));
-  const tier=Math.min(3,Math.max(1, +prompt('Tier 1–3 (1 = order most often):','2')||2));
-  items.push({name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim(),tier}); save(); render();
+  const S=store[mode];
+  if(mode==='supplies'){
+    const name=prompt('Item name:'); if(!name)return;
+    const unit=prompt('Unit of issue (e.g. 32/Case, Tote):','')||'';
+    const sku =prompt('SKU:','')||('ITEM'+(S.items.length+1));
+    const tier=Math.min(3,Math.max(1,+prompt('Tier 1-3 (1 = order most often):','2')||2));
+    S.items.push({name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim(),tier});
+  } else {
+    const equip=prompt('Equipment / aircraft:'); if(!equip)return;
+    const pn=prompt('Safety Card P/N:','')||('CARD'+(S.items.length+1));
+    const rev=prompt('Rev.:','R1')||'';
+    const color=prompt('Color name:','')||'';
+    const hex=prompt('Color hex (e.g. #FFD400):','#cccccc')||'#cccccc';
+    S.items.push({equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:color.trim(),hex:hex.trim()});
+  }
+  save(); render();
 };
 document.getElementById('sortTierBtn').onclick=()=>{
-  items.sort((a,b)=>(a.tier||2)-(b.tier||2)); save(); render(); toast('Sorted by tier');
+  store.supplies.items.sort((a,b)=>(a.tier||2)-(b.tier||2)); save(); render(); toast('Sorted by tier');
 };
 document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Restore the default item list and order? (Quantities are cleared.)')){
-    items=DEFAULTS.map(o=>({...o})); qty={}; save(); render(); toast('Defaults restored');
+  if(confirm('Restore the default '+CATALOGS[mode].noun+' list? (Quantities cleared.)')){
+    store[mode].items=clone(CATALOGS[mode].defaults); store[mode].qty={}; save(); render(); toast('Defaults restored');
   }
 };
 document.getElementById('clearBtn').onclick=()=>{
-  if(Object.values(qty).some(v=>v>0) && !confirm('Clear all quantities?'))return;
-  qty={}; save(); render(); toast('Quantities cleared');
+  const S=store[mode];
+  if(Object.values(S.qty).some(v=>v>0) && !confirm('Clear all quantities on this form?'))return;
+  S.qty={}; save(); render(); toast('Quantities cleared');
 };
 
-/* date default = today */
-const dateEl=document.getElementById('orderDate');
-(function(){ const d=new Date(); const p=n=>String(n).padStart(2,'0');
-  dateEl.value=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; })();
+/* shift + location + date */
+document.querySelectorAll('#shiftSeg button').forEach(b=>{
+  b.onclick=()=>{ shiftVal=b.dataset.s; syncShift(); save(); updateFnamePreview(); };
+});
+function syncShift(){ document.querySelectorAll('#shiftSeg button').forEach(b=>b.classList.toggle('active',b.dataset.s===shiftVal)); }
+locEl.oninput =()=>{ save(); updateFnamePreview(); };
+dateEl.onchange=()=>{ save(); updateFnamePreview(); };
 
-/* ================= PDF ENGINE (self-contained, no libraries) ================= */
+function pad2(n){ return String(n).padStart(2,'0'); }
+function fileMeta(){
+  const [Y,M,D]=dateEl.value.split('-').map(Number);
+  const dd=`${pad2(M)}.${pad2(D)}.${String(Y).slice(-2)}`;
+  const loc=(locEl.value.trim()||'').toUpperCase();
+  const type=CATALOGS[mode].type;
+  const base=`${dd} UGE ${loc?loc+' ':''}${type} ${shiftVal} SHIFT ORDER`;
+  return { base, human:`${M}/${D}/${Y}`, loc, shift:shiftVal };
+}
+function updateFnamePreview(){ fnameEl.innerHTML='Sends as: <b>'+esc(fileMeta().base)+'.pdf</b>'; }
+
+/* ================= PDF engine (self-contained, no libraries) ================= */
 const HW=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
-function tw(str,size){ let w=0; for(const ch of String(str)){ const c=ch.charCodeAt(0); w += (c>=32&&c<=126?HW[c-32]:556); } return w/1000*size; }
+function tw(str,size){ let w=0; for(const ch of String(str)){ const c=ch.charCodeAt(0); w+=(c>=32&&c<=126?HW[c-32]:556); } return w/1000*size; }
 function pesc(s){ return String(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)').replace(/[^\x20-\x7e]/g,''); }
 function nn(x){ return (Math.round(x*100)/100).toString(); }
 function bytesToBase64(u8){ let bin=''; const c=0x8000; for(let i=0;i<u8.length;i+=c){ bin+=String.fromCharCode.apply(null,u8.subarray(i,i+c)); } return btoa(bin); }
-
-function buildPDF(rows, dateStr){
-  const PW=612, PH=792, mL=40;
-  const cItem=[40,232], cUnit=[272,86], cSku=[358,150], cQty=[508,64]; // [x,width]
+function hx(h){ h=String(h||'').replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); return isNaN(n)?[1,1,1]:[((n>>16)&255)/255,((n>>8)&255)/255,(n&255)/255]; }
+function fit(str,size,maxw){ let s=String(str); if(tw(s,size)<=maxw)return s; while(s.length>2 && tw(s+'.',size)>maxw) s=s.slice(0,-1); return s+'.'; }
+function newDraw(){
   const ops=[];
-  const fill=(x,y,w,h,r,g,b)=>ops.push(`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re f`);
-  const stroke=(x,y,w,h)=>ops.push(`0.72 0.75 0.79 RG`,`0.6 w`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re S`);
-  const text=(t,x,y,size,bold,r,g,b)=>ops.push('BT',`/F${bold?2:1} ${size} Tf`,`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} Td`,`(${pesc(t)}) Tj`,'ET');
-
-  // title + date
-  const title='UGE SUPPLIES - PREORDER FORM';
-  text(title, (PW-tw(title,17))/2, 748, 17, true, .12,.29,.49);
-  if(dateStr){ const dl='Order Date: '+dateStr; text(dl,(PW-tw(dl,10))/2, 730, 10, false, .42,.46,.5); }
-
-  const tableTop=712, headerH=22, botMargin=52;
-  const avail=(tableTop-headerH)-botMargin;
-  const rowH=Math.min(20, rows.length? avail/rows.length : 20);
-  const size = rowH<15 ? 8 : 9;
-
-  // header row
-  const cols=[cItem,cUnit,cSku,cQty], labels=['ITEM','Unit of Issue','SKU','QTY:'];
-  cols.forEach((c,k)=>{
-    fill(c[0], tableTop-headerH, c[1], headerH, .557,.706,.847);
-    stroke(c[0], tableTop-headerH, c[1], headerH);
-    text(labels[k], c[0]+6, tableTop-headerH+(headerH-10)/2+1.5, 10, true, .12,.29,.49);
-  });
-
-  // data rows
-  let y=tableTop-headerH;
-  rows.forEach(it=>{
-    const top=y; y-=rowH; const bot=y; const t=it.tier||2;
-    // tier fill for item/unit/sku
-    let fr=1,fg=1,fb=1, tr=0,tg=0,tb=0;
-    if(t===1){ fr=1; fg=1; fb=0; tr=.518; tg=.235; tb=.047; }         // yellow
-    else if(t===3){ fr=.9; fg=.9; fb=.9; }                            // grey
-    [cItem,cUnit,cSku].forEach(c=>{ fill(c[0],bot,c[1],rowH,fr,fg,fb); stroke(c[0],bot,c[1],rowH); });
-    // qty cell green
-    fill(cQty[0],bot,cQty[1],rowH,.776,.878,.706); stroke(cQty[0],bot,cQty[1],rowH);
-    const base=bot+(rowH-size)/2+1.5;
-    // fit item name
-    let name=it.name; while(tw(name,size)>cItem[1]-10 && name.length>3){ name=name.slice(0,-1); }
-    if(name!==it.name) name=name.slice(0,-1)+'.';
-    text(name, cItem[0]+6, base, size, t===1, tr,tg,tb);
-    text(it.unit, cUnit[0]+6, base, size, false, tr,tg,tb);
-    let sku=it.sku; while(tw(sku,size)>cSku[1]-8 && sku.length>3){ sku=sku.slice(0,-1); }
-    text(sku, cSku[0]+6, base, size, false, tr,tg,tb);
-    const q=+it.qty||0;
-    if(q>0){ const qs=String(q); text(qs, cQty[0]+(cQty[1]-tw(qs,size+1))/2, base, size+1, true, 0,0,0); }
-  });
-
-  // assemble objects
+  return { ops,
+    fill:(x,y,w,h,r,g,b)=>ops.push(`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re f`),
+    stroke:(x,y,w,h)=>ops.push(`0.72 0.75 0.79 RG`,`0.6 w`,`${nn(x)} ${nn(y)} ${nn(w)} ${nn(h)} re S`),
+    text:(t,x,y,size,bold,r,g,b)=>ops.push('BT',`/F${bold?2:1} ${size} Tf`,`${nn(r)} ${nn(g)} ${nn(b)} rg`,`${nn(x)} ${nn(y)} Td`,`(${pesc(t)}) Tj`,'ET'),
+  };
+}
+function pdfFromOps(ops){
   const content=ops.join('\n');
   const objs=[
     '<</Type/Catalog/Pages 2 0 R>>',
@@ -355,66 +450,112 @@ function buildPDF(rows, dateStr){
   for(let i=0;i<pdf.length;i++) bytes[i]=pdf.charCodeAt(i)&0xff;
   return bytes;
 }
+function subtitle(meta){ return `${meta.loc?meta.loc+'   -   ':''}${meta.shift} SHIFT   -   Order Date: ${meta.human}`; }
 
-/* ---------------- generate & send ---------------- */
+function buildSupplyPDF(rows, meta){
+  const d=newDraw(), PW=612;
+  const cItem=[40,232], cUnit=[272,86], cSku=[358,150], cQty=[508,64];
+  const title=CATALOGS.supplies.title;
+  d.text(title,(PW-tw(title,17))/2,748,17,true,.12,.29,.49);
+  const sub=subtitle(meta); d.text(sub,(PW-tw(sub,10))/2,730,10,false,.42,.46,.5);
+  const tableTop=712,headerH=22,botMargin=52;
+  const rowH=Math.min(20, rows.length?((tableTop-headerH)-botMargin)/rows.length:20);
+  const size=rowH<15?8:9;
+  [[cItem,'ITEM'],[cUnit,'Unit of Issue'],[cSku,'SKU'],[cQty,'QTY:']].forEach(([c,l])=>{
+    d.fill(c[0],tableTop-headerH,c[1],headerH,.557,.706,.847); d.stroke(c[0],tableTop-headerH,c[1],headerH);
+    d.text(l,c[0]+6,tableTop-headerH+(headerH-10)/2+1.5,10,true,.12,.29,.49);
+  });
+  let y=tableTop-headerH;
+  rows.forEach(it=>{
+    const bot=(y-=rowH); const t=it.tier||2;
+    let fr=1,fg=1,fb=1,tr=0,tg=0,tb=0;
+    if(t===1){ fr=1;fg=1;fb=0; tr=.518;tg=.235;tb=.047; } else if(t===3){ fr=.9;fg=.9;fb=.9; }
+    [cItem,cUnit,cSku].forEach(c=>{ d.fill(c[0],bot,c[1],rowH,fr,fg,fb); d.stroke(c[0],bot,c[1],rowH); });
+    d.fill(cQty[0],bot,cQty[1],rowH,.776,.878,.706); d.stroke(cQty[0],bot,cQty[1],rowH);
+    const base=bot+(rowH-size)/2+1.5;
+    d.text(fit(it.name,size,cItem[1]-10),cItem[0]+6,base,size,t===1,tr,tg,tb);
+    d.text(it.unit,cUnit[0]+6,base,size,false,tr,tg,tb);
+    d.text(fit(it.sku,size,cSku[1]-8),cSku[0]+6,base,size,false,tr,tg,tb);
+    const q=+it.qty||0; if(q>0){ const qs=String(q); d.text(qs,cQty[0]+(cQty[1]-tw(qs,size+1))/2,base,size+1,true,0,0,0); }
+  });
+  return pdfFromOps(d.ops);
+}
+function buildSafetyPDF(rows, meta){
+  const d=newDraw(), PW=612;
+  const cEquip=[40,110], cPN=[150,170], cRev=[320,46], cColor=[366,114], cQty=[480,92];
+  const title=CATALOGS.safety.title;
+  d.text(title,(PW-tw(title,16))/2,752,16,true,.12,.29,.49);
+  const note=CATALOGS.safety.note; d.text(note,(PW-tw(note,8.5))/2,736,8.5,true,.66,.12,.12);
+  const sub=subtitle(meta); d.text(sub,(PW-tw(sub,9.5))/2,721,9.5,false,.42,.46,.5);
+  const tableTop=704,headerH=22,botMargin=52;
+  const rowH=Math.min(20, rows.length?((tableTop-headerH)-botMargin)/rows.length:20);
+  const size=rowH<15?8:9;
+  [[cEquip,'Equipment'],[cPN,'Safety Card P/N'],[cRev,'Rev.'],[cColor,'Color'],[cQty,'QTY:']].forEach(([c,l])=>{
+    d.fill(c[0],tableTop-headerH,c[1],headerH,.557,.706,.847); d.stroke(c[0],tableTop-headerH,c[1],headerH);
+    d.text(fit(l,10,c[1]-8),c[0]+5,tableTop-headerH+(headerH-10)/2+1.5,10,true,.12,.29,.49);
+  });
+  let y=tableTop-headerH;
+  rows.forEach(it=>{
+    const bot=(y-=rowH);
+    [cEquip,cPN,cRev,cColor].forEach(c=>{ d.fill(c[0],bot,c[1],rowH,1,1,1); d.stroke(c[0],bot,c[1],rowH); });
+    d.fill(cQty[0],bot,cQty[1],rowH,.776,.878,.706); d.stroke(cQty[0],bot,cQty[1],rowH);
+    const base=bot+(rowH-size)/2+1.5;
+    d.text(fit(it.equip,size,cEquip[1]-8),cEquip[0]+5,base,size,true,0,0,0);
+    d.text(fit(it.pn,size,cPN[1]-8),cPN[0]+5,base,size,false,0,0,0);
+    d.text(fit(it.rev,size,cRev[1]-6),cRev[0]+5,base,size,false,0,0,0);
+    const sw=Math.min(11,rowH-6), sx=cColor[0]+6, sy=bot+(rowH-sw)/2, [r,g,b]=hx(it.hex);
+    d.fill(sx,sy,sw,sw,r,g,b); d.stroke(sx,sy,sw,sw);
+    d.text(fit(it.color,size,cColor[1]-(sw+16)),sx+sw+6,base,size,false,0,0,0);
+    const q=+it.qty||0; if(q>0){ const qs=String(q); d.text(qs,cQty[0]+(cQty[1]-tw(qs,size+1))/2,base,size+1,true,0,0,0); }
+  });
+  return pdfFromOps(d.ops);
+}
+
+/* ================= generate & send ================= */
 document.getElementById('sendBtn').onclick=async()=>{
-  const rows=items.map(it=>({...it, qty:+qty[it.sku]||0}));
-  const ordered=rows.filter(r=>r.qty>0).length;
-  // date label + filename
-  const [Y,M,D]=dateEl.value.split('-').map(Number);
-  const human=`${M}/${D}/${Y}`;
-  const fname=`UGE Order Form ${M}.${D}.${Y}.pdf`;
-  const bytes=buildPDF(rows, human);
+  const S=store[mode], meta=fileMeta();
+  const rows=S.items.map(it=>({...it, qty:+S.qty[keyOf(it)]||0}));
+  const bytes = mode==='safety' ? buildSafetyPDF(rows,meta) : buildSupplyPDF(rows,meta);
+  const fname=meta.base+'.pdf';
   const blob=new Blob([bytes],{type:'application/pdf'});
-  const file=new File([blob], fname, {type:'application/pdf'});
+  const file=new File([blob],fname,{type:'application/pdf'});
 
-  // native Android app bridge (WebView has no navigator.share) -> real share intent
   if(window.Android && typeof window.Android.sharePdf==='function'){
     window.__nativeShareError=(m)=>toast('Share failed: '+(m||''));
     window.Android.sharePdf(bytesToBase64(bytes), fname);
     toast('Opening share…');
     return;
   }
-
-  // try native share sheet (Android)
   try{
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file], title:fname, text:`UGE supply preorder — ${human}${ordered?` (${ordered} items)`:''}`});
-      toast('Shared ✔');
-      return;
+      await navigator.share({files:[file], title:fname, text:meta.base});
+      toast('Shared ✔'); return;
     }
-  }catch(e){ if(e && e.name==='AbortError'){ return; } }
-  // fallback: download
+  }catch(e){ if(e && e.name==='AbortError') return; }
   const url=URL.createObjectURL(blob);
   const a=document.getElementById('dl'); a.href=url; a.download=fname; a.click();
   setTimeout(()=>URL.revokeObjectURL(url),4000);
   toast('PDF saved: '+fname);
 };
 
-/* ---------------- toast ---------------- */
+/* ================= toast ================= */
 let toastT;
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
-/* ================= APP ICON (drawn on canvas -> favicon + manifest) ================= */
+/* ================= app icon ================= */
 function roundRect(x,ctx,X,Y,W,H,R){ ctx.beginPath();
   ctx.moveTo(X+R,Y); ctx.arcTo(X+W,Y,X+W,Y+H,R); ctx.arcTo(X+W,Y+H,X,Y+H,R);
   ctx.arcTo(X,Y+H,X,Y,R); ctx.arcTo(X,Y,X+W,Y,R); ctx.closePath(); }
 function makeIcon(S){
   const c=document.createElement('canvas'); c.width=c.height=S; const x=c.getContext('2d');
-  // background rounded square, blue gradient
   const g=x.createLinearGradient(0,0,S,S); g.addColorStop(0,'#2E6BB0'); g.addColorStop(1,'#1F497D');
   roundRect(x,x,0,0,S,S,S*0.22); x.fillStyle=g; x.fill();
-  // notepad
   const pw=S*0.52, ph=S*0.62, px=(S-pw)/2, py=S*0.20;
   x.save(); x.shadowColor='rgba(0,0,0,.25)'; x.shadowBlur=S*0.03; x.shadowOffsetY=S*0.015;
   roundRect(x,x,px,py,pw,ph,S*0.05); x.fillStyle='#ffffff'; x.fill(); x.restore();
-  // yellow header strip on the pad
-  x.save(); roundRect(x,x,px,py,pw,ph*0.22,S*0.05); x.clip();
-  x.fillStyle='#FFD400'; x.fillRect(px,py,pw,ph*0.22); x.restore();
-  // list lines
+  x.save(); roundRect(x,x,px,py,pw,ph*0.22,S*0.05); x.clip(); x.fillStyle='#FFD400'; x.fillRect(px,py,pw,ph*0.22); x.restore();
   x.fillStyle='#c7d2e0'; const lx=px+pw*0.14, lw=pw*0.62, lh=S*0.028, gap=ph*0.16;
   for(let i=0;i<3;i++){ roundRect(x,x,lx,py+ph*0.36+i*gap,lw,lh,lh/2); x.fill(); }
-  // green check circle bottom-right
   const cr=S*0.12, cx=px+pw*0.86, cy=py+ph*0.86;
   x.beginPath(); x.arc(cx,cy,cr,0,7); x.fillStyle='#4c9a3f'; x.fill();
   x.strokeStyle='#fff'; x.lineWidth=S*0.028; x.lineCap='round'; x.lineJoin='round';
@@ -426,15 +567,19 @@ function makeIcon(S){
   document.getElementById('logo').src=i192;
   document.getElementById('favicon').href=i192;
   document.getElementById('appleicon').href=i192;
-  const manifest={ name:'UGE OrderPad', short_name:'OrderPad', description:'UGE supply preorder form',
+  const manifest={ name:'UGE OrderPad', short_name:'OrderPad', description:'UGE supply & safety card preorder',
     display:'standalone', orientation:'portrait', background_color:'#1F497D', theme_color:'#1F497D', start_url:'.',
     icons:[ {src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
             {src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'} ] };
-  const mb=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  document.getElementById('manifest').href=URL.createObjectURL(mb);
+  document.getElementById('manifest').href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/json'}));
 })();
 
-render();
+/* ================= init ================= */
+(function(){ const d=new Date(), p=n=>String(n).padStart(2,'0');
+  dateEl.value=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; })();
+locEl.value = localStorage.getItem('op_loc') ?? 'B CON';
+syncShift();
+setMode(mode);
 </script>
 </body>
 </html>
