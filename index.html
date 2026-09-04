@@ -50,11 +50,6 @@
   .count-chip{margin-left:auto; color:var(--muted)}
   .fname{padding:6px 18px 2px; font-size:11.5px; color:var(--muted); word-break:break-all; line-height:1.5}
   .fname b{color:var(--blue); font-weight:700}
-  /* safety tools */
-  .safety-tools{display:none; gap:8px; padding:6px 14px 4px}
-  .safety-tools.show{display:flex}
-  .safety-tools button{flex:1; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px; font-size:13px; font-weight:700; color:var(--blue); cursor:pointer}
-  .safety-tools button.warn{color:#c0392b; flex:none; padding-left:16px; padding-right:16px}
   /* list */
   #list{padding:6px 10px 4px}
   .item{
@@ -82,7 +77,6 @@
   }
   .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .qty input:focus{outline:none;background:#fffdf0}
-  .del-x{width:34px;height:40px;border:1px solid var(--line);background:#fff;border-radius:9px;color:#c0392b;font-size:15px;flex:none;cursor:pointer}
   /* bottom bar */
   .bottombar{
     position:fixed; left:0; right:0; bottom:0; z-index:20;
@@ -127,11 +121,6 @@
     <div class="chip count-chip" id="countChip">0 items</div>
   </div>
   <div class="fname" id="fnamePreview"></div>
-
-  <div class="safety-tools" id="safetyTools">
-    <button id="addBtn">＋ Add card</button>
-    <button id="resetBtn" class="warn">↺ Restore defaults</button>
-  </div>
 
   <div id="list"></div>
 
@@ -275,15 +264,12 @@ function render(){
           <button class="minus">−</button>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
           <button class="plus">＋</button>
-        </div>
-        <button class="del-x" title="Delete card">✕</button>`;
+        </div>`;
     }
     const input=row.querySelector('input');
     row.querySelector('.minus').onclick=()=>setQty(key,(+S.qty[key]||0)-1,input,row);
     row.querySelector('.plus').onclick =()=>setQty(key,(+S.qty[key]||0)+1,input,row);
     input.oninput=()=>setQty(key,input.value,null,row);
-    const dx=row.querySelector('.del-x');
-    if(dx) dx.onclick=()=>{ if(confirm('Delete '+(it.equip||it.name)+'?')){ delete S.qty[key]; S.items.splice(i,1); save(); render(); } };
     listEl.appendChild(row);
   });
   updateCount(); updateIncl(); updateFnamePreview();
@@ -302,20 +288,7 @@ function updateCount(){
   countEl.textContent = lines?`${lines} ${noun}${lines>1?'s':''} · ${units} qty`:`${S.items.length} ${noun}s`;
 }
 
-/* ================= safety add / restore ================= */
-document.getElementById('addBtn').onclick=()=>{
-  const S=store.safety;
-  const equip=prompt('Equipment / aircraft (e.g. B737-800/900):'); if(!equip)return;
-  const pn=prompt('Safety Card P/N:','')||('CARD'+(S.items.length+1));
-  const rev=prompt('Rev.:','R1')||'';
-  S.items.push({equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:'',hex:'#c9ccd1'});
-  save(); render();
-};
-document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Restore the default safety card list? (Quantities cleared.)')){
-    store.safety.items=clone(SAFETY_DEFAULTS); store.safety.qty={}; save(); render(); toast('Defaults restored');
-  }
-};
+/* ================= clear quantities ================= */
 document.getElementById('clearBtn').onclick=()=>{
   const S=store[mode];
   if(Object.values(S.qty).some(v=>v>0) && !confirm('Clear all quantities on this form?'))return;
@@ -327,7 +300,6 @@ function setMode(m){
   mode=m;
   document.getElementById('tabSupplies').classList.toggle('active',m==='supplies');
   const ts=document.getElementById('tabSafety'); ts.classList.toggle('active',m==='safety'); ts.classList.toggle('safety',m==='safety');
-  document.getElementById('safetyTools').classList.toggle('show',m==='safety');
   save(); render();
 }
 document.getElementById('tabSupplies').onclick=()=>setMode('supplies');
