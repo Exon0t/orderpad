@@ -14,8 +14,7 @@
 <style>
   :root{
     --blue:#1F497D; --blue2:#2E6BB0; --head:#8EB4D8;
-    --yellow:#FFE22E; --yellowRow:#FFF7B0;
-    --green:#59a14f; --greenCell:#C6E0B4;
+    --yellow:#FFE22E; --green:#59a14f; --greenCell:#C6E0B4;
     --ink:#1b2430; --muted:#6b7683; --line:#e4e8ee; --bg:#f4f6f9; --card:#fff;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
@@ -23,32 +22,22 @@
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
     background:var(--bg); color:var(--ink);
-    padding-bottom:96px;
-    -webkit-text-size-adjust:100%;
+    padding-bottom:150px; -webkit-text-size-adjust:100%;
   }
   .topbar{
     position:sticky; top:0; z-index:20;
     background:linear-gradient(135deg,var(--blue2),var(--blue));
     color:#fff; padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;
-    display:flex; align-items:center; gap:11px;
-    box-shadow:0 2px 10px rgba(0,0,0,.15);
+    display:flex; align-items:center; gap:11px; box-shadow:0 2px 10px rgba(0,0,0,.15);
   }
   .logo{width:38px;height:38px;border-radius:9px;display:block;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.3)}
   .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.2px}
   .brand .sub{font-size:11px;opacity:.8;margin-top:1px}
   .brand{flex:1;display:flex;align-items:center;gap:11px}
-  .icon-btn{
-    background:rgba(255,255,255,.16); border:none; color:#fff; width:40px;height:40px;
-    border-radius:10px; font-size:18px; display:grid;place-items:center; cursor:pointer;
-  }
-  .icon-btn.on{background:var(--yellow); color:var(--blue)}
-  /* tabs */
   .tabs{display:flex; margin:10px 14px 2px; background:#e4e9f0; border-radius:12px; padding:4px; gap:4px}
-  .tabs button{flex:1; border:none; background:transparent; padding:11px; border-radius:9px;
-    font-size:14px; font-weight:800; color:var(--muted); cursor:pointer}
+  .tabs button{flex:1; border:none; background:transparent; padding:11px; border-radius:9px; font-size:14px; font-weight:800; color:var(--muted); cursor:pointer}
   .tabs button.active{background:#fff; color:var(--blue); box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .tabs button.active.safety{color:#8a1f1f}
-  /* meta rows */
   .meta-row{display:flex; gap:8px; padding:8px 14px 2px; align-items:center}
   .chip{background:var(--card); border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px}
   .date-chip input{border:none; font:inherit; font-weight:700; color:var(--ink); background:transparent; width:118px}
@@ -59,14 +48,18 @@
   .seg button{border:none;background:transparent;padding:8px 16px;border-radius:8px;font-weight:800;font-size:13px;color:var(--muted);cursor:pointer}
   .seg button.active{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.12)}
   .count-chip{margin-left:auto; color:var(--muted)}
-  .fname{padding:6px 18px 2px; font-size:11.5px; color:var(--muted); word-break:break-all}
+  .fname{padding:6px 18px 2px; font-size:11.5px; color:var(--muted); word-break:break-all; line-height:1.5}
   .fname b{color:var(--blue); font-weight:700}
+  /* safety tools */
+  .safety-tools{display:none; gap:8px; padding:6px 14px 4px}
+  .safety-tools.show{display:flex}
+  .safety-tools button{flex:1; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px; font-size:13px; font-weight:700; color:var(--blue); cursor:pointer}
+  .safety-tools button.warn{color:#c0392b; flex:none; padding-left:16px; padding-right:16px}
   /* list */
   #list{padding:6px 10px 4px}
   .item{
     background:var(--card); border:1px solid var(--line); border-left:5px solid var(--line);
-    border-radius:12px; margin:8px 4px; padding:10px 12px;
-    display:flex; align-items:center; gap:10px;
+    border-radius:12px; margin:8px 4px; padding:10px 12px; display:flex; align-items:center; gap:9px;
   }
   .item.tier-1{border-left-color:var(--yellow); background:linear-gradient(90deg,#fffdf0, #fff 55%)}
   .item.tier-2{border-left-color:#9db9d8}
@@ -74,48 +67,38 @@
   .item.filled{box-shadow:0 0 0 2px rgba(89,161,79,.25) inset}
   .info{flex:1;min-width:0}
   .name{font-weight:700; font-size:14px; line-height:1.2; word-break:break-word}
-  .meta{font-size:11.5px; color:var(--muted); margin-top:3px; font-variant-numeric:tabular-nums; display:flex; align-items:center; flex-wrap:wrap; gap:2px}
+  .meta{font-size:11.5px; color:var(--muted); margin-top:3px; display:flex; align-items:center; flex-wrap:wrap; gap:2px}
   .tbadge{display:inline-block; font-size:10px; font-weight:800; color:var(--blue); background:#eef3fb; border-radius:5px; padding:1px 5px; margin-left:6px; vertical-align:1px}
   .tier-1 .tbadge{background:#fff2b0; color:#7a5a00}
   .swatch{width:15px;height:15px;border-radius:4px;border:1px solid rgba(0,0,0,.25);display:inline-block;margin-right:5px;flex:none}
-  /* qty stepper */
   .qty{display:flex; align-items:center; gap:0; flex:none}
   .qty button{width:38px;height:40px;border:1px solid var(--line);background:#f7f9fc;font-size:22px;line-height:1;color:var(--blue);cursor:pointer}
   .qty button:active{background:#e9eef6}
   .qty .minus{border-radius:10px 0 0 10px}
   .qty .plus{border-radius:0 10px 10px 0}
   .qty input{
-    width:48px;height:40px;border:1px solid var(--line);border-left:none;border-right:none;
-    text-align:center; font-size:17px; font-weight:800; color:var(--ink); background:#fff;
-    -moz-appearance:textfield;
+    width:46px;height:40px;border:1px solid var(--line);border-left:none;border-right:none;
+    text-align:center; font-size:17px; font-weight:800; color:var(--ink); background:#fff; -moz-appearance:textfield;
   }
   .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .qty input:focus{outline:none;background:#fffdf0}
-  /* edit controls */
-  .editctrls{display:flex; gap:6px; flex:none; flex-wrap:wrap; justify-content:flex-end; max-width:150px}
-  .editctrls button{width:38px;height:36px;border:1px solid var(--line);background:#f7f9fc;border-radius:9px;font-size:15px;color:var(--blue);cursor:pointer;display:grid;place-items:center}
-  .editctrls button.tbtn{font-weight:800;font-size:12px}
-  .editctrls button.del{color:#c0392b}
-  .edit-tools{display:none; gap:8px; padding:6px 14px 8px; flex-wrap:wrap}
-  body.editing .edit-tools{display:flex}
-  body.editing .qty{display:none}
-  body:not(.editing) .editctrls{display:none}
-  .edit-tools button{flex:1; min-width:120px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:11px; font-size:13px; font-weight:700; color:var(--blue); cursor:pointer}
-  .edit-tools button.warn{color:#c0392b}
-  .hint{padding:0 18px 4px; font-size:12px; color:var(--muted)}
+  .del-x{width:34px;height:40px;border:1px solid var(--line);background:#fff;border-radius:9px;color:#c0392b;font-size:15px;flex:none;cursor:pointer}
   /* bottom bar */
   .bottombar{
     position:fixed; left:0; right:0; bottom:0; z-index:20;
-    background:rgba(255,255,255,.96); backdrop-filter:blur(8px);
-    border-top:1px solid var(--line);
-    padding:10px 14px calc(env(safe-area-inset-bottom) + 10px);
-    display:flex; gap:10px;
+    background:rgba(255,255,255,.97); backdrop-filter:blur(8px); border-top:1px solid var(--line);
+    padding:11px 14px calc(env(safe-area-inset-bottom) + 10px);
+    display:flex; flex-direction:column; gap:10px;
   }
-  .bottombar button{border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;padding:15px}
+  .sendopt{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer}
+  .sendopt input{width:22px;height:22px;accent-color:var(--blue);flex:none}
+  .sendopt .cnt{color:var(--muted);font-weight:600}
+  .btnrow{display:flex; gap:10px}
+  .btnrow button{border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;padding:15px}
   .ghost{background:#eef1f5;color:var(--muted);flex:none;padding-left:20px;padding-right:20px}
   .primary{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff;flex:1;box-shadow:0 4px 12px rgba(31,73,125,.35)}
   .primary:active{transform:translateY(1px)}
-  #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);opacity:0;
+  #toast{position:fixed;left:50%;bottom:150px;transform:translateX(-50%) translateY(20px);opacity:0;
     background:#1b2430;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;
     transition:.25s;z-index:40;pointer-events:none;max-width:88vw;text-align:center}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -126,12 +109,8 @@
   <header class="topbar">
     <div class="brand">
       <img id="logo" class="logo" alt="">
-      <div>
-        <h1>OrderPad</h1>
-        <div class="sub">UGE Preorder</div>
-      </div>
+      <div><h1>OrderPad</h1><div class="sub">UGE Preorder</div></div>
     </div>
-    <button id="editBtn" class="icon-btn" title="Edit list">✎</button>
   </header>
 
   <div class="tabs">
@@ -149,18 +128,19 @@
   </div>
   <div class="fname" id="fnamePreview"></div>
 
-  <div class="edit-tools">
-    <button id="addBtn">＋ Add item</button>
-    <button id="sortTierBtn">↕ Sort by tier</button>
+  <div class="safety-tools" id="safetyTools">
+    <button id="addBtn">＋ Add card</button>
     <button id="resetBtn" class="warn">↺ Restore defaults</button>
   </div>
-  <div class="hint" id="editHint" style="display:none">Edit mode — reorder with ↑↓, tap T# for tier, ✎ to edit, ✕ to remove.</div>
 
   <div id="list"></div>
 
   <div class="bottombar">
-    <button id="clearBtn" class="ghost">Clear</button>
-    <button id="sendBtn" class="primary">Generate &amp; Send PDF</button>
+    <label class="sendopt"><input type="checkbox" id="inclSafety"> <span>Include Safety Cards order</span> <span class="cnt" id="inclCnt"></span></label>
+    <div class="btnrow">
+      <button id="clearBtn" class="ghost">Clear</button>
+      <button id="sendBtn" class="primary">Generate &amp; Send</button>
+    </div>
   </div>
 
   <div id="toast"></div>
@@ -195,7 +175,6 @@ const DEFAULTS = [
   {name:'LAVATORY TOTES',             unit:'Tote',      sku:'BLT-D',    tier:2},
   {name:'UAX ONBOARD TOTE',           unit:'Tote',      sku:'BXT-D',    tier:2},
 ];
-/* UGE B CON Safety Cards — equipment (aircraft), P/N, revision, color */
 const SAFETY_DEFAULTS = [
   {equip:'A319-G',       pn:'UALSCA319-G',          rev:'R1', color:'Yellow',        hex:'#FFD400'},
   {equip:'A319-F',       pn:'UALSCA319-F',          rev:'R1', color:'Pink',          hex:'#FF7FB0'},
@@ -220,26 +199,35 @@ const SAFETY_DEFAULTS = [
   {equip:'B787-J',       pn:'UALSCB787-10 J',       rev:'R2', color:'Marigold',      hex:'#FCAE1E'},
 ];
 const CATALOGS = {
-  supplies: { defaults:DEFAULTS,        title:'UGE SUPPLIES - PREORDER FORM',      type:'SUPPLIES',     noun:'item' },
-  safety:   { defaults:SAFETY_DEFAULTS, title:'UGE SAFETY CARDS - PREORDER FORM',  type:'SAFETY CARDS', noun:'card',
+  supplies: { defaults:DEFAULTS,        title:'UGE SUPPLIES - PREORDER FORM',     type:'SUPPLIES',     noun:'item' },
+  safety:   { defaults:SAFETY_DEFAULTS, title:'UGE SAFETY CARDS - PREORDER FORM', type:'SAFETY CARDS', noun:'card',
               note:'TO BE COMPLETED BY UGE SUPERVISORS or OPS MANAGERS ONLY' },
 };
 
 /* ================= state ================= */
 function load(k){ try{return JSON.parse(localStorage.getItem(k))}catch(e){return null} }
 const clone = a => a.map(o=>({...o}));
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
 const store = {
   supplies: { items: load('op_items_v1')        || clone(DEFAULTS),        qty: load('op_qty_v1')        || {} },
   safety:   { items: load('op_safety_items_v1') || clone(SAFETY_DEFAULTS), qty: load('op_safety_qty_v1') || {} },
 };
+/* new day -> auto-clear quantities from a previous day */
+(function newDayReset(){
+  const last=localStorage.getItem('op_day');
+  if(last && last!==todayStr()){ store.supplies.qty={}; store.safety.qty={}; localStorage.removeItem('op_incl'); }
+})();
 let mode = localStorage.getItem('op_mode') || 'supplies';
 let shiftVal = localStorage.getItem('op_shift') || (new Date().getHours()<12 ? 'AM' : 'PM');
 
-const listEl   = document.getElementById('list');
-const dateEl   = document.getElementById('orderDate');
-const locEl    = document.getElementById('loc');
-const countEl  = document.getElementById('countChip');
-const fnameEl  = document.getElementById('fnamePreview');
+const listEl  = document.getElementById('list');
+const dateEl  = document.getElementById('orderDate');
+const locEl   = document.getElementById('loc');
+const countEl = document.getElementById('countChip');
+const fnameEl = document.getElementById('fnamePreview');
+const inclEl  = document.getElementById('inclSafety');
+const inclCntEl = document.getElementById('inclCnt');
 
 const keyOf = it => (it.sku != null ? it.sku : it.pn);
 function save(){
@@ -250,16 +238,18 @@ function save(){
   localStorage.setItem('op_mode', mode);
   localStorage.setItem('op_loc', locEl.value);
   localStorage.setItem('op_shift', shiftVal);
+  localStorage.setItem('op_day', todayStr());
 }
 function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+const safetyFilled = () => store.safety.items.filter(it=>(+store.safety.qty[keyOf(it)]||0)>0).length;
 
 /* ================= render ================= */
 function render(){
   const S = store[mode];
   listEl.innerHTML='';
-  if(!S.items.length){ listEl.innerHTML='<div class="empty">Empty. Tap ✎ then "Add".</div>'; }
+  if(!S.items.length){ listEl.innerHTML='<div class="empty">Empty'+(mode==='safety'?' — tap "Add card".':'.')+'</div>'; }
   S.items.forEach((it,i)=>{
-    const key=keyOf(it); const q=+S.qty[key]||0;
+    const key=keyOf(it), q=+S.qty[key]||0;
     const row=document.createElement('div');
     if(mode==='supplies'){
       row.className='item tier-'+(it.tier||2)+(q>0?' filled':'');
@@ -272,11 +262,6 @@ function render(){
           <button class="minus">−</button>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
           <button class="plus">＋</button>
-        </div>
-        <div class="editctrls">
-          <button class="up">↑</button><button class="down">↓</button>
-          <button class="tbtn">T${it.tier||2}</button>
-          <button class="edit">✎</button><button class="del">✕</button>
         </div>`;
     } else {
       row.className='item'+(q>0?' filled':'');
@@ -284,38 +269,31 @@ function render(){
       row.innerHTML=`
         <div class="info">
           <div class="name">${esc(it.equip)}</div>
-          <div class="meta"><span class="swatch" style="background:${esc(it.hex)}"></span>${esc(it.color)} · ${esc(it.pn)} · ${esc(it.rev)}</div>
+          <div class="meta"><span class="swatch" style="background:${esc(it.hex)}"></span>${esc(it.color||'')}${it.color?' · ':''}${esc(it.pn)} · ${esc(it.rev)}</div>
         </div>
         <div class="qty">
           <button class="minus">−</button>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" value="${q||''}" placeholder="0">
           <button class="plus">＋</button>
         </div>
-        <div class="editctrls">
-          <button class="up">↑</button><button class="down">↓</button>
-          <button class="edit">✎</button><button class="del">✕</button>
-        </div>`;
+        <button class="del-x" title="Delete card">✕</button>`;
     }
     const input=row.querySelector('input');
     row.querySelector('.minus').onclick=()=>setQty(key,(+S.qty[key]||0)-1,input,row);
     row.querySelector('.plus').onclick =()=>setQty(key,(+S.qty[key]||0)+1,input,row);
     input.oninput=()=>setQty(key,input.value,null,row);
-    row.querySelector('.up').onclick   =()=>move(i,-1);
-    row.querySelector('.down').onclick =()=>move(i, 1);
-    row.querySelector('.edit').onclick =()=>editItem(i);
-    row.querySelector('.del').onclick  =()=>{ const nm=it.name||it.equip; if(confirm('Remove '+nm+'?')){ S.items.splice(i,1); save(); render(); } };
-    const tb=row.querySelector('.tbtn'); if(tb) tb.onclick=()=>cycleTier(i);
+    const dx=row.querySelector('.del-x');
+    if(dx) dx.onclick=()=>{ if(confirm('Delete '+(it.equip||it.name)+'?')){ delete S.qty[key]; S.items.splice(i,1); save(); render(); } };
     listEl.appendChild(row);
   });
-  updateCount();
-  updateFnamePreview();
+  updateCount(); updateIncl(); updateFnamePreview();
 }
 function setQty(key,val,input,row){
   const S=store[mode]; let n=Math.max(0,Math.floor(+val||0));
   S.qty[key]=n; save();
   if(input) input.value=n||'';
   if(row) row.classList.toggle('filled', n>0);
-  updateCount();
+  updateCount(); updateIncl(); updateFnamePreview();
 }
 function updateCount(){
   const S=store[mode], noun=CATALOGS[mode].noun;
@@ -323,70 +301,19 @@ function updateCount(){
   const units=S.items.reduce((s,it)=>s+(+S.qty[keyOf(it)]||0),0);
   countEl.textContent = lines?`${lines} ${noun}${lines>1?'s':''} · ${units} qty`:`${S.items.length} ${noun}s`;
 }
-function move(i,d){ const S=store[mode]; const j=i+d; if(j<0||j>=S.items.length)return; [S.items[i],S.items[j]]=[S.items[j],S.items[i]]; save(); render(); }
-function cycleTier(i){ const it=store.supplies.items[i]; it.tier=(it.tier||2)%3+1; save(); render(); }
-function editItem(i){
-  const S=store[mode], it=S.items[i];
-  if(mode==='supplies'){
-    const name=prompt('Item name:',it.name); if(name===null)return;
-    const unit=prompt('Unit of issue (e.g. 32/Case, Tote):',it.unit); if(unit===null)return;
-    const sku =prompt('SKU:',it.sku); if(sku===null)return;
-    if(sku!==it.sku){ S.qty[sku]=S.qty[it.sku]||0; delete S.qty[it.sku]; }
-    S.items[i]={...it,name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim()};
-  } else {
-    const equip=prompt('Equipment / aircraft:',it.equip); if(equip===null)return;
-    const pn=prompt('Safety Card P/N:',it.pn); if(pn===null)return;
-    const rev=prompt('Rev.:',it.rev); if(rev===null)return;
-    const color=prompt('Color name:',it.color); if(color===null)return;
-    const hex=prompt('Color hex (e.g. #FFD400):',it.hex); if(hex===null)return;
-    if(pn!==it.pn){ S.qty[pn]=S.qty[it.pn]||0; delete S.qty[it.pn]; }
-    S.items[i]={...it,equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:color.trim(),hex:hex.trim()};
-  }
-  save(); render();
-}
 
-/* ================= tabs / controls ================= */
-function setMode(m){
-  mode=m;
-  document.getElementById('tabSupplies').classList.toggle('active',m==='supplies');
-  const ts=document.getElementById('tabSafety'); ts.classList.toggle('active',m==='safety'); ts.classList.toggle('safety',m==='safety');
-  document.getElementById('sortTierBtn').style.display = m==='supplies'?'':'none';
-  document.getElementById('addBtn').textContent = m==='safety'?'＋ Add card':'＋ Add item';
-  save(); render();
-}
-document.getElementById('tabSupplies').onclick=()=>setMode('supplies');
-document.getElementById('tabSafety').onclick  =()=>setMode('safety');
-
-document.getElementById('editBtn').onclick=()=>{
-  document.body.classList.toggle('editing');
-  const on=document.body.classList.contains('editing');
-  document.getElementById('editBtn').classList.toggle('on',on);
-  document.getElementById('editHint').style.display=on?'block':'none';
-};
+/* ================= safety add / restore ================= */
 document.getElementById('addBtn').onclick=()=>{
-  const S=store[mode];
-  if(mode==='supplies'){
-    const name=prompt('Item name:'); if(!name)return;
-    const unit=prompt('Unit of issue (e.g. 32/Case, Tote):','')||'';
-    const sku =prompt('SKU:','')||('ITEM'+(S.items.length+1));
-    const tier=Math.min(3,Math.max(1,+prompt('Tier 1-3 (1 = order most often):','2')||2));
-    S.items.push({name:name.trim().toUpperCase(),unit:unit.trim(),sku:sku.trim(),tier});
-  } else {
-    const equip=prompt('Equipment / aircraft:'); if(!equip)return;
-    const pn=prompt('Safety Card P/N:','')||('CARD'+(S.items.length+1));
-    const rev=prompt('Rev.:','R1')||'';
-    const color=prompt('Color name:','')||'';
-    const hex=prompt('Color hex (e.g. #FFD400):','#cccccc')||'#cccccc';
-    S.items.push({equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:color.trim(),hex:hex.trim()});
-  }
+  const S=store.safety;
+  const equip=prompt('Equipment / aircraft (e.g. B737-800/900):'); if(!equip)return;
+  const pn=prompt('Safety Card P/N:','')||('CARD'+(S.items.length+1));
+  const rev=prompt('Rev.:','R1')||'';
+  S.items.push({equip:equip.trim(),pn:pn.trim(),rev:rev.trim(),color:'',hex:'#c9ccd1'});
   save(); render();
-};
-document.getElementById('sortTierBtn').onclick=()=>{
-  store.supplies.items.sort((a,b)=>(a.tier||2)-(b.tier||2)); save(); render(); toast('Sorted by tier');
 };
 document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Restore the default '+CATALOGS[mode].noun+' list? (Quantities cleared.)')){
-    store[mode].items=clone(CATALOGS[mode].defaults); store[mode].qty={}; save(); render(); toast('Defaults restored');
+  if(confirm('Restore the default safety card list? (Quantities cleared.)')){
+    store.safety.items=clone(SAFETY_DEFAULTS); store.safety.qty={}; save(); render(); toast('Defaults restored');
   }
 };
 document.getElementById('clearBtn').onclick=()=>{
@@ -395,7 +322,17 @@ document.getElementById('clearBtn').onclick=()=>{
   S.qty={}; save(); render(); toast('Quantities cleared');
 };
 
-/* shift + location + date */
+/* ================= tabs / controls ================= */
+function setMode(m){
+  mode=m;
+  document.getElementById('tabSupplies').classList.toggle('active',m==='supplies');
+  const ts=document.getElementById('tabSafety'); ts.classList.toggle('active',m==='safety'); ts.classList.toggle('safety',m==='safety');
+  document.getElementById('safetyTools').classList.toggle('show',m==='safety');
+  save(); render();
+}
+document.getElementById('tabSupplies').onclick=()=>setMode('supplies');
+document.getElementById('tabSafety').onclick  =()=>setMode('safety');
+
 document.querySelectorAll('#shiftSeg button').forEach(b=>{
   b.onclick=()=>{ shiftVal=b.dataset.s; syncShift(); save(); updateFnamePreview(); };
 });
@@ -403,16 +340,24 @@ function syncShift(){ document.querySelectorAll('#shiftSeg button').forEach(b=>b
 locEl.oninput =()=>{ save(); updateFnamePreview(); };
 dateEl.onchange=()=>{ save(); updateFnamePreview(); };
 
+/* include-safety decision: explicit override, else auto when safety has qty */
+function includeSafety(){ const o=localStorage.getItem('op_incl'); return o!=null ? o==='1' : safetyFilled()>0; }
+inclEl.onchange=()=>{ localStorage.setItem('op_incl', inclEl.checked?'1':'0'); updateFnamePreview(); };
+function updateIncl(){ inclEl.checked=includeSafety(); const n=safetyFilled(); inclCntEl.textContent = n?`(${n} card${n>1?'s':''})`:''; }
+
 function pad2(n){ return String(n).padStart(2,'0'); }
-function fileMeta(){
+function fileMeta(m){
   const [Y,M,D]=dateEl.value.split('-').map(Number);
   const dd=`${pad2(M)}.${pad2(D)}.${String(Y).slice(-2)}`;
   const loc=(locEl.value.trim()||'').toUpperCase();
-  const type=CATALOGS[mode].type;
-  const base=`${dd} UGE ${loc?loc+' ':''}${type} ${shiftVal} SHIFT ORDER`;
+  const base=`${dd} UGE ${loc?loc+' ':''}${CATALOGS[m].type} ${shiftVal} SHIFT ORDER`;
   return { base, human:`${M}/${D}/${Y}`, loc, shift:shiftVal };
 }
-function updateFnamePreview(){ fnameEl.innerHTML='Sends as: <b>'+esc(fileMeta().base)+'.pdf</b>'; }
+function updateFnamePreview(){
+  let h='Sends: <b>'+esc(fileMeta('supplies').base)+'.pdf</b>';
+  if(includeSafety()) h+='<br>＋ <b>'+esc(fileMeta('safety').base)+'.pdf</b>';
+  fnameEl.innerHTML=h;
+}
 
 /* ================= PDF engine (self-contained, no libraries) ================= */
 const HW=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
@@ -503,9 +448,9 @@ function buildSafetyPDF(rows, meta){
     d.text(fit(it.equip,size,cEquip[1]-8),cEquip[0]+5,base,size,true,0,0,0);
     d.text(fit(it.pn,size,cPN[1]-8),cPN[0]+5,base,size,false,0,0,0);
     d.text(fit(it.rev,size,cRev[1]-6),cRev[0]+5,base,size,false,0,0,0);
-    const sw=Math.min(11,rowH-6), sx=cColor[0]+6, sy=bot+(rowH-sw)/2, [r,g,b]=hx(it.hex);
-    d.fill(sx,sy,sw,sw,r,g,b); d.stroke(sx,sy,sw,sw);
-    d.text(fit(it.color,size,cColor[1]-(sw+16)),sx+sw+6,base,size,false,0,0,0);
+    const sw=Math.min(11,rowH-6), sx=cColor[0]+6, sy=bot+(rowH-sw)/2, rgb=hx(it.hex);
+    d.fill(sx,sy,sw,sw,rgb[0],rgb[1],rgb[2]); d.stroke(sx,sy,sw,sw);
+    d.text(fit(it.color||'',size,cColor[1]-(sw+16)),sx+sw+6,base,size,false,0,0,0);
     const q=+it.qty||0; if(q>0){ const qs=String(q); d.text(qs,cQty[0]+(cQty[1]-tw(qs,size+1))/2,base,size+1,true,0,0,0); }
   });
   return pdfFromOps(d.ops);
@@ -513,29 +458,42 @@ function buildSafetyPDF(rows, meta){
 
 /* ================= generate & send ================= */
 document.getElementById('sendBtn').onclick=async()=>{
-  const S=store[mode], meta=fileMeta();
-  const rows=S.items.map(it=>({...it, qty:+S.qty[keyOf(it)]||0}));
-  const bytes = mode==='safety' ? buildSafetyPDF(rows,meta) : buildSupplyPDF(rows,meta);
-  const fname=meta.base+'.pdf';
-  const blob=new Blob([bytes],{type:'application/pdf'});
-  const file=new File([blob],fname,{type:'application/pdf'});
-
-  if(window.Android && typeof window.Android.sharePdf==='function'){
-    window.__nativeShareError=(m)=>toast('Share failed: '+(m||''));
-    window.Android.sharePdf(bytesToBase64(bytes), fname);
-    toast('Opening share…');
-    return;
+  const files=[]; // {name, bytes}
+  const sMeta=fileMeta('supplies');
+  const sRows=store.supplies.items.map(it=>({...it, qty:+store.supplies.qty[keyOf(it)]||0}));
+  files.push({ name:sMeta.base+'.pdf', bytes:buildSupplyPDF(sRows,sMeta) });
+  if(includeSafety()){
+    const fMeta=fileMeta('safety');
+    const fRows=store.safety.items.map(it=>({...it, qty:+store.safety.qty[keyOf(it)]||0}));
+    files.push({ name:fMeta.base+'.pdf', bytes:buildSafetyPDF(fRows,fMeta) });
   }
+  const subject=sMeta.base;
+
+  // native Android (multi-file aware)
+  if(window.Android && typeof window.Android.sharePdfs==='function'){
+    window.__nativeShareError=(m)=>toast('Share failed: '+(m||''));
+    window.Android.sharePdfs(JSON.stringify(files.map(f=>f.name)), JSON.stringify(files.map(f=>bytesToBase64(f.bytes))));
+    toast('Opening share…'); return;
+  }
+  if(window.Android && typeof window.Android.sharePdf==='function'){ // older single-file build
+    window.Android.sharePdf(bytesToBase64(files[0].bytes), files[0].name);
+    toast(files.length>1?'Sent supplies — update app to attach safety':'Opening share…'); return;
+  }
+  // web share sheet
+  const fileObjs=files.map(f=>new File([f.bytes],f.name,{type:'application/pdf'}));
   try{
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file], title:fname, text:meta.base});
+    if(navigator.canShare && navigator.canShare({files:fileObjs})){
+      await navigator.share({files:fileObjs, title:subject, text:subject});
       toast('Shared ✔'); return;
     }
   }catch(e){ if(e && e.name==='AbortError') return; }
-  const url=URL.createObjectURL(blob);
-  const a=document.getElementById('dl'); a.href=url; a.download=fname; a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),4000);
-  toast('PDF saved: '+fname);
+  // download fallback (one or two files)
+  for(const f of files){
+    const url=URL.createObjectURL(new Blob([f.bytes],{type:'application/pdf'}));
+    const a=document.getElementById('dl'); a.href=url; a.download=f.name; a.click();
+    await new Promise(r=>setTimeout(r,500)); URL.revokeObjectURL(url);
+  }
+  toast(files.length>1?'2 PDFs saved':'PDF saved');
 };
 
 /* ================= toast ================= */
@@ -580,6 +538,7 @@ function makeIcon(S){
 locEl.value = localStorage.getItem('op_loc') ?? 'B CON';
 syncShift();
 setMode(mode);
+save();
 </script>
 </body>
 </html>
